@@ -13,6 +13,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Cambiado (skills)
 - T0.4: `norkut-context` apunta a los archivos con `${CLAUDE_PLUGIN_ROOT}/memory/`, separa colecciones compartidas de eventos, y pide confirmar en el código antes de actuar sobre datos del relevamiento.
 
+- T0.5: `feature-kickoff`, `pr-review` y `promote-learning` usan rutas `${CLAUDE_PLUGIN_ROOT}/memory/`, las reglas reales de contratos de eventos (solo aditivos, sin versión) y los chequeos de capas, conector e idempotencia de `docs/`; cuidan el límite diario del MCP de ClickUp.
+- Template de `CLAUDE.md`, regla `integration-events.md` y README de hooks: "bump de versión" reemplazado por la regla de cambios aditivos.
+
 ### Corregido
 - `plugin.json` de `norkut-core`: se quitan `skills`, `agents`, `hooks` y `mcpServers`, que apuntaban a las ubicaciones por defecto; `agents` como directorio hacía fallar `claude plugin validate`.
 

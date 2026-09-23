@@ -14,6 +14,7 @@
 
 ## Estructura
 - Un Folder por vertical: Integraciones, POS, Manejo Lotes, Bridge, Corporativo, Fidelización, Reposición Inteligente, Evolutivo. Cada uno con lista "Backlog".
+- 2026-09 · ClickUp API · Además existe el Folder "Tooling" (lista "List"), fuera de las verticales. Los nombres de estados y campos de esta página no se verificaron contra la API todavía.
 - Epics = tareas tipo Milestone; el trabajo va como subtasks.
 - Campos: Risk (Normal / Warning / Danger), Target Date.
 - Bugs: lista "Inbox" a nivel Space, alimentada por Form con campo Origen (Cliente / Soporte / Interno / QA); triage diario los mueve al Folder de su vertical.

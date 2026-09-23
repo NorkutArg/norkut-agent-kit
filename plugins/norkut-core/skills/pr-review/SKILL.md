@@ -14,16 +14,17 @@ Input: URL o número de PR y repo. Si no está dado, usar el branch actual.
 
 | Chequeo | Qué mirar |
 |---|---|
-| Multitenant | Toda query/command a Mongo filtra por tenant. Handlers que reciben `TenantId` del contexto y no del request. Ver `risks.md` |
-| Contratos de eventos | Si toca un evento de `event-contracts.md`: ¿bump de versión? ¿consumidores actualizados o compatibles? ¿`event-contracts.md` actualizado? |
-| Colecciones compartidas | Cambios de esquema en colecciones que `modules.md` marca como compartidas → ¿se avisó al otro owner? |
+| Multitenant | .NET: toda query nueva lleva `.WithTenant(...)` (DAO que hereda de `TenantDao<T>`, tenant desde `IContextService.SubscriptionId`) o un `.NonTenant()` justificado. Python: todo pipeline arranca con `$match` por `TenantId`. Nunca tenant tomado del request. Ver `${CLAUDE_PLUGIN_ROOT}/memory/risks.md` |
+| Contratos de eventos | Si toca un `record` de `namespace IntegrationEvents.Events`: solo cambios aditivos, propiedades nuevas nullable y sin `required`, sin renombrar tipo, namespace ni `EndpointName`. Consumidores en `${CLAUDE_PLUGIN_ROOT}/memory/event-contracts.md`; confirmar todas las copias con `nk-event-contract` |
+| Colecciones compartidas | Cambios de esquema en colecciones de "Colecciones compartidas" de `${CLAUDE_PLUGIN_ROOT}/memory/modules.md` → ¿se avisó a los otros repos? |
 | Consistencia eventual | ¿El feature asume lectura inmediata después de escribir vía evento? ¿Los criterios de aceptación lo contemplan? |
-| DDD / CQRS | Lógica de dominio en aggregates, no en handlers; commands y queries separados; nada de acceso a Mongo desde controllers |
+| Capas y conector | `*.Domain` sin `Microsoft.AspNetCore.*` ni `MongoDbQueryBuilder`; controllers delgados; mapeo solo por `IMapper`; todo acceso a Mongo por el conector (nunca `IMongoCollection`), sin mezclar `BackAegis.MongoDbConnector` con `MongoDbConnector` en un servicio; nombres de colección desde `Collections`. Angular: sin `HttpClient` directo en componentes |
 | Secretos y config | Nada hardcodeado; connection strings y tokens por configuración |
-| Tests | Tests unitarios de la lógica nueva; test explícito de aislamiento de tenant si tocó repositorios |
-| Hangfire | Jobs nuevos: idempotentes, con reintentos acotados; recordar que el storage actual es en memoria |
-| Observabilidad | Logs estructurados con tenant y correlation id en paths nuevos |
-| ClickUp | Branch/PR con ID `CU-xxxx`; la tarea está en `in progress` |
+| Consumers idempotentes | Consumers nuevos o modificados toleran reentrega (upsert o chequeo de existencia); revisar también `IConsumer<Batch<X>>` |
+| Paquetes | Paquetes y versiones nuevas existen de verdad; verificar contra `.csproj` / `package.json` / `requirements.txt` del servicio |
+| Tests | Tests en `*.Tests` espejando la capa; test explícito de aislamiento de tenant si tocó DAOs |
+| Hangfire | Jobs nuevos: idempotentes, con reintentos acotados; el storage es en memoria (`${CLAUDE_PLUGIN_ROOT}/memory/gotchas.md`) |
+| ClickUp | Branch/PR con ID `CU-xxxx` (`${CLAUDE_PLUGIN_ROOT}/memory/workflow.md`); la tarea está en `in progress` |
 | Tamaño | > 400 líneas de diff sin justificación → sugerir partir |
 
 3. **Riesgo global** del PR: Normal / Warning / Danger, con una línea de justificación.
@@ -53,5 +54,6 @@ Input: URL o número de PR y repo. Si no está dado, usar el branch actual.
 
 ## Reglas
 - Un ❌ en Multitenant o Contratos es bloqueante siempre.
+- `FrontFeatures-*`: el merge no llega a producción; en "Para QA" recordar que hay que publicar el paquete y subir la versión en `Front-Core`.
 - No comentar estilo si el linter ya lo cubre.
 - Si el diff es demasiado grande para leerlo entero, decirlo y revisar por archivo priorizando repositorios, handlers y eventos.
