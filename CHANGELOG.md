@@ -9,3 +9,6 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ### Corregido
 - `plugin.json` de `norkut-core`: se quitan `skills`, `agents`, `hooks` y `mcpServers`, que apuntaban a las ubicaciones por defecto; `agents` como directorio hacía fallar `claude plugin validate`.
+
+### Cambiado
+- `hooks/hooks.json` de `norkut-core` queda vacío hasta T0.9: referenciaba scripts que todavía no existen y rompía cada `Write`/`Edit`/`Bash` al instalar el plugin.
