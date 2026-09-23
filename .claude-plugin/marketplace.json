@@ -1,0 +1,12 @@
+{
+  "name": "norkut",
+  "owner": { "name": "Norkut" },
+  "description": "Plugins de Claude Code del equipo Norkut",
+  "plugins": [
+    {
+      "name": "norkut-core",
+      "source": "./plugins/norkut-core",
+      "description": "Skills, agentes, hooks, MCPs y memoria cross-repo del equipo Norkut"
+    }
+  ]
+}

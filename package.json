@@ -1,0 +1,25 @@
+{
+  "name": "@norkut/agent-kit",
+  "version": "0.1.0",
+  "description": "Harness de IA del equipo Norkut: marketplace de plugins de Claude Code, CLI de bootstrap y memoria compartida cross-repo",
+  "type": "module",
+  "bin": {
+    "norkut-agent-kit": "bin/cli.js"
+  },
+  "files": [
+    "bin/",
+    "plugins/",
+    "templates/",
+    ".claude-plugin/"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^14.0.3"
+  },
+  "license": "UNLICENSED"
+}
