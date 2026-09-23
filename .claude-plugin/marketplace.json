@@ -19,6 +19,11 @@
       "name": "norkut-frontend",
       "source": "./plugins/norkut-frontend",
       "description": "Convenciones Angular de Norkut: Front-Core, FrontFeatures-* (@mele/*), NgRx e i18n"
+    },
+    {
+      "name": "norkut-pm",
+      "source": "./plugins/norkut-pm",
+      "description": "Herramientas de PM/TPM: status reports y resúmenes de dailies desde las transcripciones Tactiq"
     }
   ]
 }

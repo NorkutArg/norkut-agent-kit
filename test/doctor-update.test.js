@@ -1,6 +1,6 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -31,12 +31,14 @@ beforeEach(() => {
   spawnSync('git', ['init', '-q', repo]);
 });
 
-// Copia del kit con otra versión de norkut-core, para simular un kit nuevo.
-function kitWithCoreVersion(version) {
+// Copia del kit con otra versión en todos sus plugins, para simular un kit nuevo.
+function kitWithVersion(version) {
   const kit = join(dir, 'kit');
   cpSync(KIT, kit, { recursive: true, filter: (s) => !s.includes('node_modules') && !s.includes('.git') });
-  const p = join(kit, 'plugins/norkut-core/.claude-plugin/plugin.json');
-  writeFileSync(p, JSON.stringify({ ...JSON.parse(readFileSync(p, 'utf8')), version }));
+  for (const name of readdirSync(join(kit, 'plugins'))) {
+    const p = join(kit, 'plugins', name, '.claude-plugin/plugin.json');
+    writeFileSync(p, JSON.stringify({ ...JSON.parse(readFileSync(p, 'utf8')), version }));
+  }
   return kit;
 }
 
@@ -78,18 +80,18 @@ test('doctor reporta norkut-core no instalado', () => {
 
 test('update sube de versión y doctor lo refleja', () => {
   init({ role: 'pm', env, log: quiet });
-  const kit = kitWithCoreVersion('0.2.0');
+  const kit = kitWithVersion('0.2.0');
   assert.match(doctor({ cwd: dir, env, kitRoot: kit, mcp: false, log: quiet }).problems[0], /0\.1\.0 instalado, el kit pinea 0\.2\.0/);
   env.FAKE_CLAUDE_MARKET_VERSION = '0.2.0';
   const res = update({ env, kitRoot: kit, log: quiet });
-  assert.deepEqual(res, { updated: ['norkut-core@norkut'], behind: [] });
+  assert.deepEqual(res, { updated: ['norkut-core@norkut', 'norkut-pm@norkut'], behind: [] });
   assert.deepEqual(doctor({ cwd: dir, env, kitRoot: kit, mcp: false, log: quiet }).problems, []);
 });
 
 test('update avisa si el marketplace no entrega la versión que pinea el kit', () => {
   init({ role: 'pm', env, log: quiet });
-  const res = update({ env, kitRoot: kitWithCoreVersion('0.3.0'), log: quiet });
-  assert.deepEqual(res.behind, ['norkut-core@norkut: instalado 0.1.0, el kit pinea 0.3.0']);
+  const res = update({ env, kitRoot: kitWithVersion('0.3.0'), log: quiet });
+  assert.deepEqual(res.behind, ['norkut-core@norkut: instalado 0.1.0, el kit pinea 0.3.0', 'norkut-pm@norkut: instalado 0.1.0, el kit pinea 0.3.0']);
 });
 
 test('update falla si no se corrió init', () => {

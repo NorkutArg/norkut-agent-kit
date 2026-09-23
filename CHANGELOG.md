@@ -18,6 +18,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.
 
 ### Agregado (skills)
+- T2.2: plugin `norkut-pm` con `status-report` (período) y `daily-summary` (un día), a partir de las transcripciones Tactiq en Google Drive. Migra y amplía el skill `norkut-status-report`.
 - T1.4: plugins `norkut-backend` (`dotnet-module`, `mongo-collection`) y `norkut-frontend` (`angular-feature`), registrados en el marketplace. Dependen de `norkut-core`.
 - `tenant-isolation-check`, `event-contract-check` y `dod-check` en `norkut-core`. Los dos primeros portan `nk-tenant-audit` y `nk-event-contract` del workspace para que funcionen desde un solo repo (fallback a `gh search code`) y suman las formas Python de PyMassTransit. Hooks, `pr-review`, memoria y templates apuntan a ellos en vez de a los skills del workspace.
 

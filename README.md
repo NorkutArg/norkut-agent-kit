@@ -18,6 +18,7 @@ npx @norkut/agent-kit doctor   # verifica que todo esté en orden
 - `norkut-core` (todos): `/norkut-core:feature-kickoff` · `/norkut-core:pr-review` · `/norkut-core:dod-check` · `/norkut-core:tenant-isolation-check` · `/norkut-core:event-contract-check` · `/norkut-core:promote-learning` · `norkut-context` (automático)
 - `norkut-backend` (`--role backend`): `/norkut-backend:dotnet-module` · `/norkut-backend:mongo-collection`
 - `norkut-frontend` (`--role frontend`): `/norkut-frontend:angular-feature`
+- `norkut-pm` (`--role pm`): `/norkut-pm:status-report` · `/norkut-pm:daily-summary` (necesitan el conector de Google Drive de claude.ai)
 
 ## Contribuir
 Leer `SPEC.md` y `CLAUDE.md`. Cambios por PR; skills y memoria tienen owner. Nunca commitear credenciales.

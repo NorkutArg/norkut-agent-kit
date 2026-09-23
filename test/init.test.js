@@ -1,6 +1,6 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { init, requiredEnvVars } from '../src/init.js';
 
 const FAKE = fileURLToPath(new URL('../test-fixtures/fake-claude.js', import.meta.url));
+const KIT = fileURLToPath(new URL('..', import.meta.url));
 const CLI = fileURLToPath(new URL('../bin/cli.js', import.meta.url));
 const quiet = () => {};
 let dir, env;
@@ -43,7 +44,7 @@ test('idempotente: la segunda corrida no agrega ni instala nada', () => {
 });
 
 test('no reinstala lo que ya está configurado', () => {
-  writeFileSync(env.FAKE_CLAUDE_STATE, JSON.stringify({ marketplaces: ['norkut'], plugins: [{ id: 'norkut-core@norkut', version: '0.1.0' }] }));
+  writeFileSync(env.FAKE_CLAUDE_STATE, JSON.stringify({ marketplaces: ['norkut'], plugins: [{ id: 'norkut-core@norkut', version: '0.1.0' }, { id: 'norkut-pm@norkut', version: '0.1.0' }] }));
   const report = init({ role: 'pm', env, log: quiet });
   assert.deepEqual(report.changed, []);
   assert.deepEqual(mutating(calls()), []);
@@ -55,7 +56,13 @@ test('--source se usa para agregar el marketplace', () => {
 });
 
 test('avisa si el plugin del rol todavía no existe en el marketplace', () => {
-  const report = init({ role: 'pm', env, log: quiet });
+  // Copia del kit cuyo marketplace no publica norkut-pm.
+  const kit = join(mkdtempSync(join(tmpdir(), 'nak-kit-')), 'kit');
+  cpSync(KIT, kit, { recursive: true, filter: (s) => !s.includes('node_modules') && !s.includes('.git') });
+  const mp = join(kit, '.claude-plugin/marketplace.json');
+  const data = JSON.parse(readFileSync(mp, 'utf8'));
+  writeFileSync(mp, JSON.stringify({ ...data, plugins: data.plugins.filter((p) => p.name !== 'norkut-pm') }));
+  const report = init({ role: 'pm', env, kitRoot: kit, log: quiet });
   assert.ok(report.warnings.some((w) => w.startsWith('norkut-pm todavía no existe')));
 });
 
