@@ -28,9 +28,9 @@ beforeEach(() => {
 const calls = () => readFileSync(env.FAKE_CLAUDE_LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
 const mutating = (list) => list.filter((a) => a.includes('add') || a.includes('install'));
 
-test('máquina limpia: agrega el marketplace e instala norkut-core', () => {
+test('máquina limpia: agrega el marketplace e instala norkut-core y el plugin del rol', () => {
   const report = init({ role: 'backend', env, log: quiet });
-  assert.deepEqual(report.changed, ['marketplace norkut (NorkutArg/norkut-agent-kit)', 'norkut-core@norkut']);
+  assert.deepEqual(report.changed, ['marketplace norkut (NorkutArg/norkut-agent-kit)', 'norkut-core@norkut', 'norkut-backend@norkut']);
   assert.ok(calls().some((a) => a.join(' ') === 'plugin install norkut-core@norkut --scope user'));
 });
 
@@ -55,8 +55,8 @@ test('--source se usa para agregar el marketplace', () => {
 });
 
 test('avisa si el plugin del rol todavía no existe en el marketplace', () => {
-  const report = init({ role: 'frontend', env, log: quiet });
-  assert.ok(report.warnings.some((w) => w.startsWith('norkut-frontend todavía no existe')));
+  const report = init({ role: 'pm', env, log: quiet });
+  assert.ok(report.warnings.some((w) => w.startsWith('norkut-pm todavía no existe')));
 });
 
 test('reporta env vars faltantes solo por nombre', () => {

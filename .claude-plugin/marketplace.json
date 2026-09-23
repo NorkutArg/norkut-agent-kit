@@ -1,12 +1,24 @@
 {
   "name": "norkut",
-  "owner": { "name": "Norkut" },
+  "owner": {
+    "name": "Norkut"
+  },
   "description": "Plugins de Claude Code del equipo Norkut",
   "plugins": [
     {
       "name": "norkut-core",
       "source": "./plugins/norkut-core",
       "description": "Skills, agentes, hooks, MCPs y memoria cross-repo del equipo Norkut"
+    },
+    {
+      "name": "norkut-backend",
+      "source": "./plugins/norkut-backend",
+      "description": "Convenciones .NET de Norkut: servicios DDD por capas, MediatR, DAOs y colecciones compartidas"
+    },
+    {
+      "name": "norkut-frontend",
+      "source": "./plugins/norkut-frontend",
+      "description": "Convenciones Angular de Norkut: Front-Core, FrontFeatures-* (@mele/*), NgRx e i18n"
     }
   ]
 }

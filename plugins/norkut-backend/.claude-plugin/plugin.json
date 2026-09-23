@@ -1,0 +1,8 @@
+{
+  "name": "norkut-backend",
+  "version": "0.1.0",
+  "description": "Convenciones .NET de Norkut: servicios DDD por capas, commands/queries con MediatR, DAOs con el conector de Mongo y colecciones compartidas",
+  "author": { "name": "Norkut" },
+  "keywords": ["norkut", "dotnet", "mongodb", "backend"],
+  "dependencies": ["norkut-core"]
+}

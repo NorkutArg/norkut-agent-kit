@@ -1,0 +1,8 @@
+{
+  "name": "norkut-frontend",
+  "version": "0.1.0",
+  "description": "Convenciones Angular de Norkut: Front-Core, librerías FrontFeatures-* (@mele/*), NgRx, i18n y publicación de paquetes",
+  "author": { "name": "Norkut" },
+  "keywords": ["norkut", "angular", "ngrx", "frontend"],
+  "dependencies": ["norkut-core"]
+}

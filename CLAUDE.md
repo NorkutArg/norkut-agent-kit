@@ -17,6 +17,7 @@ Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al ce
 ### Pendiente de prueba (la hace Diego, no bloquea seguir)
 - T0.5 / T1.3: `feature-kickoff`, `pr-review` y `promote-learning` end-to-end sobre una tarea de ClickUp y PRs reales. Estados y campos de ClickUp sin verificar contra la API (plan Free: 100 llamadas por día).
 - Skills `dod-check`, `event-contract-check` y `tenant-isolation-check`: construidos y cargan (`claude plugin details`), sin correr sobre un cambio real. Portan la lógica de `nk-tenant-audit` y `nk-event-contract` del workspace; fuera del workspace, `event-contract-check` busca con `gh search code --owner NorkutArg`.
+- T1.4: `norkut-backend` (`dotnet-module`, `mongo-collection`) y `norkut-frontend` (`angular-feature`) validan pero no se instalaron ni se probaron; falta revisarlos con sus owners (sin definir). Declaran `"dependencies": ["norkut-core"]` y consultan la memoria vía el skill `norkut-core:norkut-context`, porque un plugin no puede leer archivos de otro.
 - T1.2: revisar con el Arquitecto los borradores de `CLAUDE.md` de `Module-Integrations` y `Front-Core` (12 preguntas `_completar con el Arquitecto_`) y abrir los PRs en esos repos.
 - Seguridad (fuera del kit): rotar el token de Azure DevOps de `Module-Integrations/docker-compose.yml` y las claves de su `.env` (commit `88f7837`), el `_password` de `Front-Core/.npmrc` (commit `f20f36b`) y revisar la API key de `Front-Core/public/env.js`. Avisar la query sin tenant de `mercadopago_api/.../order_repository.py:87`.
 - Push del kit a una rama + PR (todo el trabajo está solo en local).
@@ -28,7 +29,7 @@ Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al ce
 - Cursor no lee `CLAUDE.md` (solo `.cursor/rules/` y `AGENTS.md`), contra lo que dice `SPEC.md` §4.1. ¿Generar `AGENTS.md`? Choca con la regla del workspace.
 
 ### Falta construir
-- T1.4: plugins `norkut-backend` y `norkut-frontend` (y `norkut-pm` en T2.2).
+- `norkut-pm` (T2.2: migrar `norkut-status-report`).
 
 ### Cómo probar en local
 - CLI: `init` y los tests hablan con Claude Code solo vía `src/claude.js`; los tests reemplazan `claude` por `test-fixtures/fake-claude.js` en el `PATH` (fuera de `test/` porque `node --test` ejecuta todo `.js` bajo `test/`). `node bin/cli.js init --role pm --source ./`.
