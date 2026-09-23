@@ -26,7 +26,6 @@ Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al ce
 ### Pendiente de decisión
 - T1.1: registro para publicar el CLI. GitHub Packages exige renombrar a `@norkutarg/agent-kit`; Azure DevOps Artifacts mantiene `@norkut/agent-kit` pero suma un PAT de Azure. Publicar requiere push y tag `v<versión>`; con eso, `init` debería agregar el marketplace pineado (`NorkutArg/norkut-agent-kit@v<versión>`).
 - Owners y verticales de `modules.md` (casi todos `_por definir_`); "Terraform" en el resumen de `MEMORY.md` sin evidencia en `repos/`.
-- Cursor no lee `CLAUDE.md` (solo `.cursor/rules/` y `AGENTS.md`), contra lo que dice `SPEC.md` §4.1. ¿Generar `AGENTS.md`? Choca con la regla del workspace.
 
 ### Falta construir
 - Nada de Fase 0–2 que no dependa de personas: T2.1 (`init`/`sync` en todo el equipo) y T2.3 (ciclo de `promote-learning`) son de adopción.
@@ -47,7 +46,8 @@ Hay dos mundos: **este repo (el kit)** y **los repos destino** de `NorkutArg` do
 | `plugins/norkut-core/` (skills, agents, hooks, `.mcp.json`, `memory/`) | Plugin instalado a scope **usuario** vía `init` (no scope proyecto: tuvo bugs) |
 | `plugins/norkut-core/memory/` | Leída en runtime por el skill `norkut-context` vía `${CLAUDE_PLUGIN_ROOT}/memory/`; para Cursor, `sync` la copia a `.agent/shared/` (gitignored) y resume en `.cursor/rules/00-norkut-context.mdc` |
 | `templates/CLAUDE.md.template` | `CLAUDE.md` del repo destino, con `{{REPO}}`, `{{MODULES}}`, etc. Se crea solo si no existe; nunca se pisa |
-| `templates/rules/*.md` (frontmatter `paths:`) | `.agent/rules/` (fuente canónica, commiteada) → generados `.claude/rules/*.md` y `.cursor/rules/*.mdc` (`paths:` → `globs:`) |
+| `templates/rules/*.md` (frontmatter `stacks:` y `paths:`) | `.agent/rules/` (fuente canónica, commiteada; se siembran solo las del stack detectado: `dotnet`, `angular`, `python`) → generados `.claude/rules/*.md` y `.cursor/rules/*.mdc` (`paths:` → `globs:`; `stacks:` no pasa) |
+| — | `.cursor/rules/01-repo-instructions.mdc`: Cursor no lee `CLAUDE.md`, así que esta regla lo adjunta con `@CLAUDE.md` y `@.agent/memory/MEMORY.md` |
 | `templates/agent-memory/MEMORY.md` | `.agent/memory/MEMORY.md` del repo destino |
 | `templates/gitignore.snippet` | Se agrega al `.gitignore` del destino si falta |
 | `plugins/norkut-core/.mcp.json` | Mergeado por nombre de server en `~/.claude/.mcp.json` sin pisar entradas existentes |

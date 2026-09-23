@@ -1,4 +1,5 @@
 ---
+stacks: [dotnet]
 paths:
   - "**/IntegrationEvents/**/*.cs"
   - "**/Events/**/*.cs"

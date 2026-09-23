@@ -40,7 +40,7 @@
 6. Auto memory de Claude     notas personales que Claude escribe solo               ← local, no se comparte
 ```
 
-Cursor lee `CLAUDE.md` directo. Las reglas por path se mantienen en `.agent/rules/` (fuente canónica) y el kit genera `.claude/rules/*.md` y `.cursor/rules/*.mdc` a partir de ahí. Cuando la versión de Cursor del equipo lea `.claude/skills/` y `.claude/rules/` de forma nativa, el generador se elimina.
+Cursor no lee `CLAUDE.md` (solo `.cursor/rules/` y `AGENTS.md`): `sync` genera `.cursor/rules/01-repo-instructions.mdc` (`alwaysApply: true`), que adjunta `@CLAUDE.md` y `@.agent/memory/MEMORY.md` por referencia, sin copiarlos. Las reglas por path se mantienen en `.agent/rules/` (fuente canónica) y el kit genera `.claude/rules/*.md` y `.cursor/rules/*.mdc` a partir de ahí. Cuando la versión de Cursor del equipo lea `.claude/skills/` y `.claude/rules/` de forma nativa, el generador se elimina.
 
 ### 4.2 Distribución
 

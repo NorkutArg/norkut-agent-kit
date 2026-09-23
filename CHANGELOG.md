@@ -8,6 +8,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.1: `package.json` del CLI `@norkut/agent-kit`, `bin/cli.js` con los comandos `init`, `sync`, `doctor` y `update` (todavía sin implementar), y `.claude-plugin/marketplace.json` inicial.
 
 ### Agregado (CLI)
+- `sync` siembra en `.agent/rules/` solo las reglas base del stack del repo (`stacks:` en el frontmatter; `dotnet`, `angular`, `python`; sin stack detectado, todas). Nueva regla base `python-services.md`.
+- `sync` genera `.cursor/rules/01-repo-instructions.mdc`, que le adjunta a Cursor el `CLAUDE.md` y la memoria del repo por referencia (Cursor no lee `CLAUDE.md`).
 - CI: `.github/workflows/test.yml` corre `node --test` y `npm pack --dry-run` en Node 20 y 22 en cada PR.
 - T0.6: `init --role backend|frontend|pm [--source <repo o ruta>]`. Verifica Claude Code y Cursor, agrega el marketplace `norkut` si falta, instala `norkut-core` y el plugin del rol si ya existe en el marketplace, y lista las env vars faltantes de los MCPs. Idempotente.
 - T0.7: `sync`. Desde la raíz de un repo git crea `CLAUDE.md` (si falta) con datos de `modules.md` y los servicios .NET detectados, siembra `.agent/rules/` (si falta), genera `.claude/rules/*.md` y `.cursor/rules/*.mdc`, borra generados huérfanos, copia la memoria a `.agent/shared/`, genera `.cursor/rules/00-norkut-context.mdc`, crea `.agent/memory/MEMORY.md` y completa el `.gitignore`. Idempotente.

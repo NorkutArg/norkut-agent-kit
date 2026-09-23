@@ -22,11 +22,13 @@ function listMd(dir) {
 }
 
 // Frontmatter mínimo de las reglas: solo `paths:` como lista YAML de strings.
+// `stacks: [dotnet, angular]` (opcional) decide en qué repos se siembra la regla; no pasa a los generados.
 export function parseRule(text) {
   const m = text.match(/^---\n([\s\S]*?)\n---\n?/);
-  if (!m) return { paths: [], body: text };
+  if (!m) return { paths: [], stacks: [], body: text };
   const paths = [...m[1].matchAll(/^\s*-\s*["']?([^"'\n]+?)["']?\s*$/gm)].map((x) => x[1]);
-  return { paths, body: text.slice(m[0].length) };
+  const stacks = m[1].match(/^stacks:\s*\[([^\]]*)\]/m)?.[1].split(',').map((x) => x.trim()).filter(Boolean) ?? [];
+  return { paths, stacks, body: text.slice(m[0].length) };
 }
 
 export function toClaudeRule({ paths, body }) {
@@ -63,9 +65,33 @@ export function detectServices(root) {
     .sort();
 }
 
+// Stacks del repo, para sembrar solo las reglas base que aplican.
+export function detectStacks(root) {
+  const stacks = new Set();
+  const top = readdirSync(root);
+  if (detectServices(root).length || top.some((f) => /\.(sln|csproj)$/.test(f))) stacks.add('dotnet');
+  const pkg = join(root, 'package.json');
+  if (top.includes('angular.json') || (existsSync(pkg) && readFileSync(pkg, 'utf8').includes('"@angular/core"'))) stacks.add('angular');
+  const py = (dir) => ['requirements.txt', 'pyproject.toml', 'setup.py'].some((f) => existsSync(join(dir, f)));
+  if (py(root) || top.some((d) => !d.startsWith('.') && statSync(join(root, d)).isDirectory() && py(join(root, d)))) stacks.add('python');
+  return [...stacks].sort();
+}
+
 function fill(template, values) {
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => values[k] ?? PENDING);
 }
+
+// Cursor no lee CLAUDE.md (solo .cursor/rules/ y AGENTS.md): esta regla le adjunta el CLAUDE.md del repo y su
+// memoria por referencia, sin copiarlos.
+const REPO_INSTRUCTIONS_RULE = [
+  '---',
+  'description: Instrucciones y memoria de este repo',
+  'alwaysApply: true',
+  '---',
+  '<!-- generado por norkut-agent-kit — editar CLAUDE.md y .agent/memory/ -->',
+  'Seguir las instrucciones de @CLAUDE.md y la memoria del repo en @.agent/memory/MEMORY.md.',
+  '',
+].join('\n');
 
 // Resumen para Cursor: el "Resumen" de MEMORY.md y la tabla de riesgos, con punteros a .agent/shared/.
 export function contextRule(memoryDir) {
@@ -114,6 +140,7 @@ export function generatedFiles(cwd, kitRoot = KIT_ROOT) {
   };
   copy(memoryDir, join(cwd, '.agent/shared'));
   files.set(join(cwd, '.cursor/rules/00-norkut-context.mdc'), contextRule(memoryDir));
+  files.set(join(cwd, '.cursor/rules/01-repo-instructions.mdc'), REPO_INSTRUCTIONS_RULE);
 
   // Huérfanos: generados (con la marca) cuya fuente ya no existe. Nunca archivos sin la marca.
   const orphans = [];
@@ -151,9 +178,14 @@ export function sync({ cwd = process.cwd(), kitRoot = KIT_ROOT, log = console.lo
 
   // 2. .agent/rules/: reglas base solo si la carpeta no existe (después es del repo).
   const rulesDir = join(cwd, '.agent/rules');
+  // Si no se detecta ningún stack, se siembran todas.
   if (!existsSync(rulesDir)) {
+    const stacks = detectStacks(cwd);
     for (const f of listMd(join(templates, 'rules'))) {
-      writeIfChanged(join(rulesDir, f), readFileSync(join(templates, 'rules', f), 'utf8'), changed);
+      const text = readFileSync(join(templates, 'rules', f), 'utf8');
+      const ruleStacks = parseRule(text).stacks;
+      if (stacks.length && ruleStacks.length && !ruleStacks.some((st) => stacks.includes(st))) continue;
+      writeIfChanged(join(rulesDir, f), text, changed);
     }
   }
 

@@ -1,4 +1,5 @@
 ---
+stacks: [dotnet]
 paths:
   - "**/*Repository*.cs"
   - "**/Persistence/**/*.cs"

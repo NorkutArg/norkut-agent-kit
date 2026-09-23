@@ -1,4 +1,5 @@
 ---
+stacks: [angular]
 paths:
   - "src/app/**/*.ts"
 ---

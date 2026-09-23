@@ -1,11 +1,11 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { sync, parseRule, toClaudeRule, toCursorRule, moduleRow } from '../src/sync.js';
+import { sync, parseRule, toClaudeRule, toCursorRule, moduleRow, detectStacks } from '../src/sync.js';
 
 const CLI = fileURLToPath(new URL('../bin/cli.js', import.meta.url));
 const quiet = () => {};
@@ -70,20 +70,20 @@ test('regenera un generado editado a mano y borra los huérfanos, sin tocar regl
   sync({ cwd: repo, log: quiet });
   writeFileSync(join(repo, '.claude/rules/mongo-repositories.md'), 'editado a mano\n');
   writeFileSync(join(repo, '.claude/rules/propia.md'), '# regla propia del repo\n');
-  rmSync(join(repo, '.agent/rules/angular-features.md'));
+  rmSync(join(repo, '.agent/rules/integration-events.md'));
   const { changed } = sync({ cwd: repo, log: quiet });
   assert.match(read('.claude/rules/mongo-repositories.md'), /generado por norkut-agent-kit/);
-  assert.ok(!existsSync(join(repo, '.claude/rules/angular-features.md')));
-  assert.ok(!existsSync(join(repo, '.cursor/rules/angular-features.mdc')));
+  assert.ok(!existsSync(join(repo, '.claude/rules/integration-events.md')));
+  assert.ok(!existsSync(join(repo, '.cursor/rules/integration-events.mdc')));
   assert.equal(read('.claude/rules/propia.md'), '# regla propia del repo\n');
-  assert.ok(changed.includes('.claude/rules/angular-features.md (borrado)'));
+  assert.ok(changed.includes('.claude/rules/integration-events.md (borrado)'));
 });
 
 test('no recrea .agent/rules si el repo borró una regla base', () => {
   sync({ cwd: repo, log: quiet });
-  rmSync(join(repo, '.agent/rules/angular-features.md'));
+  rmSync(join(repo, '.agent/rules/integration-events.md'));
   sync({ cwd: repo, log: quiet });
-  assert.ok(!existsSync(join(repo, '.agent/rules/angular-features.md')));
+  assert.ok(!existsSync(join(repo, '.agent/rules/integration-events.md')));
 });
 
 test('regla sin paths: siempre aplica en Cursor y sin frontmatter en Claude', () => {
@@ -110,4 +110,48 @@ test('CLI: sync dos veces, la segunda sin cambios', () => {
   const second = run();
   assert.equal(second.status, 0);
   assert.match(second.stdout, /Sin cambios/);
+});
+
+// Repo git temporal con los archivos indicados.
+function repoWith(files) {
+  const dir = join(mkdtempSync(join(tmpdir(), 'nak-stack-')), 'Repo');
+  for (const [p, c] of Object.entries(files)) {
+    mkdirSync(join(dir, p, '..'), { recursive: true });
+    writeFileSync(join(dir, p), c);
+  }
+  spawnSync('git', ['init', '-q', dir]);
+  return dir;
+}
+const seeded = (dir) => readdirSync(join(dir, '.agent/rules')).sort();
+
+test('siembra solo las reglas base del stack del repo', () => {
+  assert.deepEqual(seeded((sync({ cwd: repo, log: quiet }), repo)), ['integration-events.md', 'mongo-repositories.md']);
+  const ng = repoWith({ 'angular.json': '{}', 'package.json': '{"dependencies":{"@angular/core":"^19"}}' });
+  sync({ cwd: ng, log: quiet });
+  assert.deepEqual(seeded(ng), ['angular-features.md']);
+  const py = repoWith({ 'svc_a/requirements.txt': 'pymongo' });
+  sync({ cwd: py, log: quiet });
+  assert.deepEqual(seeded(py), ['python-services.md']);
+});
+
+test('sin stack detectado siembra todas las reglas base', () => {
+  const unknown = repoWith({ 'README.md': 'x' });
+  assert.deepEqual(detectStacks(unknown), []);
+  sync({ cwd: unknown, log: quiet });
+  assert.equal(seeded(unknown).length, 4);
+});
+
+test('stacks: no pasa a las reglas generadas', () => {
+  sync({ cwd: repo, log: quiet });
+  assert.doesNotMatch(read('.claude/rules/mongo-repositories.md'), /stacks:/);
+  assert.doesNotMatch(read('.cursor/rules/mongo-repositories.mdc'), /stacks:/);
+  assert.deepEqual(parseRule('---\nstacks: [dotnet, python]\n---\n# x\n').stacks, ['dotnet', 'python']);
+});
+
+test('Cursor recibe CLAUDE.md y la memoria del repo por referencia', () => {
+  sync({ cwd: repo, log: quiet });
+  const rule = read('.cursor/rules/01-repo-instructions.mdc');
+  assert.match(rule, /^---\ndescription: .+\nalwaysApply: true\n---/);
+  assert.match(rule, /@CLAUDE\.md/);
+  assert.match(rule, /@\.agent\/memory\/MEMORY\.md/);
 });
