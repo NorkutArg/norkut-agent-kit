@@ -1,7 +1,7 @@
 # Módulos, repos, owners
 
 > Una fila por repo con lógica de negocio. "Emite" = eventos que consume **otro** repo (detalle y consumidores en `event-contracts.md`). Mapa completo de los 58 repos: `docs/repo-map.md` del workspace.
-> Colecciones y eventos salen de un scan de `repos/` (constantes `*/Constants/Collections.cs`; eventos .NET en carpetas `IntegrationEvents/Producers|Consumers/`, Python por `urn:message:IntegrationEvents.Events:`, `message_name` y `exchange_name`). Es un relevamiento, no una garantía: antes de tocar un evento correr `/norkut-core:event-contract-check`.
+> Colecciones y eventos salen de `node scripts/scan-repos.js <ruta a repos/>` (kit): constantes `*/Constants/Collections.cs`; eventos C# por contenido (`*Consumer<X>`, `<X>Producer.cs`) y Python por `urn:message:IntegrationEvents.Events:`, `message_name` y `exchange_name`. Es un relevamiento, no una garantía: antes de tocar un evento correr `/norkut-core:event-contract-check`.
 
 - 2026-09 · scan repos/ · 14 repos .NET declaran 112 colecciones; 23 se repiten en más de un repo (tabla de abajo).
 - 2026-09 · docs/repo-map.md · Un repo ≠ un servicio: `Module-POS` tiene 6 servicios (PointOfSale, StoreOperation, FiscalOperation, Synchronization, ExternalExchangeRate, ApiGateway).
@@ -11,23 +11,23 @@
 
 | Repo | Qué es | Vertical ClickUp | Owner | Emite (cross-repo) |
 |---|---|---|---|---|
-| Module-POS | Point of Sale (6 servicios) | POS | _por definir_ | SalePointCreated, SalePointChanged, ExchangeRateCreated |
-| Module-CRM | Customer Relationship Mgmt · campañas y promociones | _por definir_ | _por definir_ | CampaignChanged, CampaignCustomersBatchChanged |
+| Module-POS | Point of Sale (6 servicios) | POS | _por definir_ | SalePointCreated, SalePointChanged, ExchangeRateCreated, IntegrationManagementCreate |
+| Module-CRM | Customer Relationship Mgmt · campañas y promociones | _por definir_ | _por definir_ | CampaignChanged, CampaignCustomersBatchChanged, CustomerChanged |
 | Module-FMS | Financial Management System · cuentas a cobrar/pagar, retenciones | _por confirmar_ (figuraba "Fidelización") | _por definir_ | ReceivablesPaid, ReceivableReversed |
-| Module-IMS | Inventory Management System · conteos, movimientos | Manejo Lotes | _por definir_ | CountCompleted, MovementUpdated, StoreConfigUpdated, StartBulkOperation |
+| Module-IMS | Inventory Management System · conteos, movimientos | Manejo Lotes | _por definir_ | CountCompleted, MovementUpdated, StoreConfigUpdated, StartBulkOperationCommand |
 | Module-LMS | License Management System · suscripciones | _por definir_ | _por definir_ | StoreChanged, SubscriptionCreated/Updated, PaymentOrderChanged, TokenRevoked, SendEmail |
-| Module-PIM | Product Information Management | _por definir_ | _por definir_ | ProductChanged, ProductSupplierAdded |
+| Module-PIM | Product Information Management | _por definir_ | _por definir_ | ProductChanged, ProductSupplierAdded, ProductsImportCompleted |
 | Module-SRM | Supplier Relationship Mgmt · órdenes de compra | _por definir_ | _por definir_ | PurchaseOrder* (7 eventos), SupplierChanged, BillChanged |
 | Module-SSM | AuthBridge + Authorization · usa `.NonTenant()` legítimo | transversal | _por definir_ | UserChanged |
 | Module-CMS | Configuration Mgmt · compañías, tiendas, monedas | _por definir_ | _por definir_ | CompanyCreated, CompanyUpdated, UserUpdated |
 | Module-TMS | Transportation Mgmt · transferencias | _por definir_ | _por definir_ | TransferSent/Received/Cancelled/ReceptionVoided |
 | Module-CBS | Customer Billing System · pockets | _por definir_ | _por definir_ | PocketMovementCreated |
-| Module-CSS | Customer Service System · licencias | _por definir_ | _por definir_ | NotifyPaymentStatus, NotifySubscriptionStatus, CreatePartnerUser |
+| Module-CSS | Customer Service System · licencias | _por definir_ | _por definir_ | NotifyPaymentStatus, NotifySubscriptionStatus (CreatePartnerUser lo consume PRM, pero el scan no detecta el productor) |
 | Module-PRM | Partner Mgmt | _por definir_ | _por definir_ | NotifyPaymentStatus, NotifySubscriptionStatus, UserUpserted |
-| Module-IntegrationBridge | Puente con sistemas externos | Bridge | _por definir_ | ExchangeRate, Store, User |
+| Module-IntegrationBridge | Puente con sistemas externos | Bridge | _por definir_ | IntegrateExchangeRate, IntegrateProduct, IntegrateStore, IntegrateStoreConfig, IntegrateSupplier, IntegrateUser |
 | Module-HCM, BPM, FRM, MobileClub, PaymentGateways | Solo consumen eventos cross-repo | _por definir_ | _por definir_ | — |
 | Module-CORP | Vacío | Corporativo | _por definir_ | — |
-| JobScheduler | Hangfire · jobs recurrentes | transversal | _por definir_ | StoreConfigUpdated, StoreConfigBatchUpdated, BulkExchangeRateUpdated, UpdateSubscription, ApplySubscriptionDowngrade |
+| JobScheduler | Hangfire · jobs recurrentes | transversal | _por definir_ | StoreConfigUpdated, StoreConfigBatchUpdated, BulkExchangeRateUpdated, UpdateSubscription, ApplySubscriptionDowngrade, ShiftClosed |
 
 ## Python, Lambdas y apps
 

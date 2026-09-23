@@ -37,7 +37,8 @@ Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al ce
 - `sync`/`doctor`: sobre un clon en el scratchpad (`git clone -q repos/<Repo> <scratchpad>/<Repo>`), nunca sobre `repos/`. `doctor` reutiliza `generatedFiles()` de `src/sync.js`; `update` compara contra `plugins/*/.claude-plugin/plugin.json` (`src/kit.js`).
 - Plugin: `claude plugin update` no refresca la copia en `~/.claude/plugins/cache/` sin bump de `version`; usar `uninstall` + `install`. `plugin.json` no declara rutas: se autodescubren `skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`.
 - Hooks (`plugins/norkut-core/hooks/*.mjs`): solo actúan en repos con remoto `NorkutArg`; probar en un repo del scratchpad con `git remote add origin git@github.com:NorkutArg/<x>.git`.
-- Memoria: el relevamiento de colecciones y eventos (C# por carpetas `IntegrationEvents/`, Python por `urn:message:`, `message_name`, `exchange_name`) todavía no está versionado en el kit.
+- Memoria: `node scripts/scan-repos.js <ruta a repos/>` regenera las tablas de `modules.md` y `event-contracts.md` (`--json` para el detalle). Detecta eventos C# por contenido, no por carpeta. Los owners, verticales y notas se editan a mano.
+- Convenciones del kit (frontmatter y largo de skills, referencias entre skills, memoria con fecha y origen, sin credenciales): `test/conventions.test.js`. CI: `.github/workflows/test.yml` (Node 20 y 22).
 
 ## Arquitectura en una foto
 Hay dos mundos: **este repo (el kit)** y **los repos destino** de `NorkutArg` donde corre el CLI. No confundirlos.
