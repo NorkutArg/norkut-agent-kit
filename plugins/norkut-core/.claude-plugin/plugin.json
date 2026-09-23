@@ -1,0 +1,11 @@
+{
+  "name": "norkut-core",
+  "version": "0.1.0",
+  "description": "Skills, agentes, hooks, MCPs y memoria cross-repo del equipo Norkut",
+  "author": { "name": "Norkut" },
+  "keywords": ["norkut", "workflow", "review", "multitenant"],
+  "skills": "./skills",
+  "agents": "./agents",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": "./.mcp.json"
+}

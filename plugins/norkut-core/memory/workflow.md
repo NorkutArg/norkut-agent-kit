@@ -1,0 +1,30 @@
+# Workflow de features
+
+## Estados en ClickUp (Space "Producto Norkut")
+`backlog → planning → plan validated → to do → in progress → qa testing → completed → Closed`
+
+| Transición | Quién | Qué tiene que existir |
+|---|---|---|
+| backlog → planning | dev o PM | Kickoff hecho (`feature-kickoff`) |
+| planning → plan validated | Arquitecto + PM | Plan aprobado en la tarea |
+| to do → in progress | dev | Branch con ID de ClickUp |
+| in progress → qa testing | dev | PR mergeado, `dod-check` ok, `pr-review` sin bloqueantes, desplegado en staging |
+| qa testing → completed | QA | Criterios de aceptación validados en staging |
+| completed → Closed | Arquitecto (release manager) | Incluido en release de producción |
+
+## Estructura
+- Un Folder por vertical: Integraciones, POS, Manejo Lotes, Bridge, Corporativo, Fidelización, Reposición Inteligente, Evolutivo. Cada uno con lista "Backlog".
+- Epics = tareas tipo Milestone; el trabajo va como subtasks.
+- Campos: Risk (Normal / Warning / Danger), Target Date.
+- Bugs: lista "Inbox" a nivel Space, alimentada por Form con campo Origen (Cliente / Soporte / Interno / QA); triage diario los mueve al Folder de su vertical.
+
+## Branches y PRs
+- Nombre de branch: `<tipo>/CU-<id>-<slug>` (p. ej. `feature/CU-86abc123-sync-stock`). La integración GitHub–ClickUp linkea automáticamente si el ID está en el branch o en el título del PR.
+- PR: título con el ID, descripción con link a la tarea y checklist de `dod-check`.
+
+## Roles
+- Arquitecto: valida planes, release manager, define fechas de producción.
+- PM (Diego): prioridad, riesgos cross-vertical, DoD.
+- QA: valida en staging después del merge.
+
+- 2026-09 · decisión · ClickUp elegido sobre Plane y GitHub Projects.

@@ -1,0 +1,43 @@
+# {{REPO}}
+
+<!-- Generado por norkut-agent-kit sync. Completar las secciones marcadas; este archivo NO se regenera. -->
+
+## Qué es
+{{DESCRIPCION}}
+
+Vertical(es): {{VERTICALES}} · Módulos: {{MODULES}} · Owner: {{OWNER}}
+
+## Contexto compartido
+El contexto cross-repo (módulos, contratos de eventos, riesgos, workflow) viene del plugin `norkut-core`. Usar el skill `norkut-context` para consultarlo. En Cursor, está resumido en `.cursor/rules/00-norkut-context.mdc` y completo en `.agent/shared/`.
+
+## Stack
+<!-- .NET x / Angular x / Python / Mongo. Versiones reales. -->
+
+## Comandos
+```bash
+# build
+# test
+# run local
+# lint
+```
+
+## Cómo está organizado
+<!-- Carpetas principales y qué va en cada una. Aggregates, handlers, repositorios, eventos. -->
+
+## Eventos de integración que emite / consume
+<!-- Nombres y versión; el detalle está en event-contracts.md del kit. -->
+
+## Colecciones Mongo que toca
+<!-- Marcar las compartidas con otros módulos. -->
+
+## Reglas de este repo
+- Toda query a Mongo filtra por tenant. `TenantId` sale del contexto, nunca del request.
+- Cambiar un evento de integración = bump de versión + PR a `event-contracts.md` del kit.
+- Branches: `<tipo>/CU-<id>-<slug>`.
+- Antes de mover a `qa testing`: `/norkut-core:dod-check` y `/norkut-core:pr-review` sin bloqueantes.
+
+## Reglas por path
+Ver `.agent/rules/` (fuente) → generadas en `.claude/rules/` y `.cursor/rules/`.
+
+## Memoria de este repo
+@.agent/memory/MEMORY.md
