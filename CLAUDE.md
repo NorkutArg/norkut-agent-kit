@@ -13,7 +13,9 @@ Kit de herramientas de IA para el equipo Norkut: marketplace de plugins de Claud
 
 ## Estado actual (Fase 0 en curso)
 T0.1 hecha: `bin/cli.js` expone `init|sync|doctor|update`, pero los cuatro son stubs que salen con código 1. Faltan, entre otros:
-- T0.2 hecha. T0.3 hecha: `memory/` poblada desde `docs/` y `repos/OnBoarding/` del workspace y un scan de `repos/` (colecciones en `*/Constants/Collections.cs`, eventos en `IntegrationEvents/Producers|Consumers/`). Owners y verticales siguen `_por definir_`. `plugin.json` no declara rutas de componentes: se usan las ubicaciones por defecto (`skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`), que se autodescubren.
+- T0.2 hecha. T0.3 hecha: `memory/` poblada desde `docs/` y `repos/OnBoarding/` del workspace y un scan de `repos/` (colecciones en `*/Constants/Collections.cs`, eventos en `IntegrationEvents/Producers|Consumers/`). Owners y verticales siguen `_por definir_`.
+- T0.4 hecha: en una sesión limpia `claude -p "¿Qué módulos de Norkut tocan la colección stores?"` invoca `norkut-context` y responde desde `modules.md`.
+- Probar cambios del plugin en local: `claude plugin update` no refresca la copia en `~/.claude/plugins/cache/` sin bump de `version` en `plugin.json`; usar `claude plugin uninstall` + `install`. Con el marketplace local, `${CLAUDE_PLUGIN_ROOT}` resolvió a este repo, no al caché. `plugin.json` no declara rutas de componentes: se usan las ubicaciones por defecto (`skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`), que se autodescubren.
 - T0.9: `hooks.json` está vacío a propósito para poder instalar el plugin sin hooks rotos. Al implementar los scripts, restaurar la config original con `git show da697ea:plugins/norkut-core/hooks/hooks.json`.
 - Skills `dod-check`, `event-contract-check`, `tenant-isolation-check` (referenciadas en README, templates y hooks) y los plugins `norkut-backend`/`frontend`/`pm`.
 
