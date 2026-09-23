@@ -15,7 +15,7 @@ Input: URL o número de PR y repo. Si no está dado, usar el branch actual.
 | Chequeo | Qué mirar |
 |---|---|
 | Multitenant | .NET: toda query nueva lleva `.WithTenant(...)` (DAO que hereda de `TenantDao<T>`, tenant desde `IContextService.SubscriptionId`) o un `.NonTenant()` justificado. Python: todo pipeline arranca con `$match` por `TenantId`. Nunca tenant tomado del request. Ver `${CLAUDE_PLUGIN_ROOT}/memory/risks.md` |
-| Contratos de eventos | Si toca un `record` de `namespace IntegrationEvents.Events`: solo cambios aditivos, propiedades nuevas nullable y sin `required`, sin renombrar tipo, namespace ni `EndpointName`. Consumidores en `${CLAUDE_PLUGIN_ROOT}/memory/event-contracts.md`; confirmar todas las copias con `nk-event-contract` |
+| Contratos de eventos | Si toca un `record` de `namespace IntegrationEvents.Events`: solo cambios aditivos, propiedades nuevas nullable y sin `required`, sin renombrar tipo, namespace ni `EndpointName`. Consumidores en `${CLAUDE_PLUGIN_ROOT}/memory/event-contracts.md`; confirmar todas las copias con `/norkut-core:event-contract-check` |
 | Colecciones compartidas | Cambios de esquema en colecciones de "Colecciones compartidas" de `${CLAUDE_PLUGIN_ROOT}/memory/modules.md` → ¿se avisó a los otros repos? |
 | Consistencia eventual | ¿El feature asume lectura inmediata después de escribir vía evento? ¿Los criterios de aceptación lo contemplan? |
 | Capas y conector | `*.Domain` sin `Microsoft.AspNetCore.*` ni `MongoDbQueryBuilder`; controllers delgados; mapeo solo por `IMapper`; todo acceso a Mongo por el conector (nunca `IMongoCollection`), sin mezclar `BackAegis.MongoDbConnector` con `MongoDbConnector` en un servicio; nombres de colección desde `Collections`. Angular: sin `HttpClient` directo en componentes |
@@ -53,7 +53,7 @@ Input: URL o número de PR y repo. Si no está dado, usar el branch actual.
 ```
 
 ## Reglas
-- Un ❌ en Multitenant o Contratos es bloqueante siempre.
+- Un ❌ en Multitenant o Contratos es bloqueante siempre. Si el diff toca persistencia o eventos, delegar el detalle en `/norkut-core:tenant-isolation-check` y `/norkut-core:event-contract-check`.
 - `FrontFeatures-*`: el merge no llega a producción; en "Para QA" recordar que hay que publicar el paquete y subir la versión en `Front-Core`.
 - No comentar estilo si el linter ya lo cubre.
 - Si el diff es demasiado grande para leerlo entero, decirlo y revisar por archivo priorizando repositorios, handlers y eventos.

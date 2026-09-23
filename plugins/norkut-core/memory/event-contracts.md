@@ -1,6 +1,6 @@
 # Contratos de eventos de integración
 
-> Qué eventos cruzan repos, quién los emite y quién los consume. Listado relevado con un scan de `repos/`; para el detalle vivo de un evento puntual correr `nk-event-contract` (busca en todos los lenguajes).
+> Qué eventos cruzan repos, quién los emite y quién los consume. Listado relevado con un scan de `repos/`; para el detalle vivo de un evento puntual correr `/norkut-core:event-contract-check` (busca en todos los lenguajes).
 > `contract-guard` revisa: `**/IntegrationEvents/**/*.cs` (la carpeta vive en `*.Domain`, `*.Application` o `*.Actions` según el servicio).
 
 ## Cómo funciona el contrato

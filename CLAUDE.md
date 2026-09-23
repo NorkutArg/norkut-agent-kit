@@ -11,21 +11,31 @@ Kit de herramientas de IA para el equipo Norkut: marketplace de plugins de Claud
 - Trabajar una tarea de `PLAN.md` por vez, en orden. Cada tarea tiene criterio de aceptación: no está hecha hasta que se verifica.
 - Verificar el formato actual de `plugin.json`, `marketplace.json` y `hooks.json` en https://code.claude.com/docs/en/plugins-reference (y el I/O de hooks en https://code.claude.com/docs/en/hooks) antes de escribirlos. No confiar en formatos de memoria.
 
-## Estado actual (Fase 0 en curso)
-T0.1 hecha: `bin/cli.js` expone `init|sync|doctor|update`. Faltan, entre otros:
-- T0.2 hecha. T0.3 hecha: `memory/` poblada desde `docs/` y `repos/OnBoarding/` del workspace y un scan de `repos/` (colecciones en `*/Constants/Collections.cs`, eventos en `IntegrationEvents/Producers|Consumers/`). Owners y verticales siguen `_por definir_`.
-- T0.4 hecha: en una sesión limpia `claude -p "¿Qué módulos de Norkut tocan la colección stores?"` invoca `norkut-context` y responde desde `modules.md`.
-- T0.5 a medias: los `SKILL.md` de `feature-kickoff`, `pr-review` y `promote-learning` están ajustados a la memoria y a las convenciones de `docs/`; la prueba end-to-end sobre una tarea y un PR reales queda para el final de la Fase 0. Estados y campos de ClickUp sin verificar contra la API (límite diario del plan Free).
-- T0.6 hecha: `init` (`src/init.js`) solo habla con Claude Code a través de `src/claude.js`; los tests reemplazan `claude` por `test-fixtures/fake-claude.js` en el `PATH` (queda fuera de `test/` porque `node --test` ejecuta todo `.js` bajo `test/`). Probar en local con `node bin/cli.js init --role pm --source ./`.
-- T0.7 hecha: `sync` (`src/sync.js`). Probar sobre un clon local en el scratchpad (`git clone -q repos/<Repo> <scratchpad>/<Repo>`), nunca sobre `repos/` (el workspace prohíbe crear `CLAUDE.md` ahí).
-- T0.8 hecha: `doctor` (`src/doctor.js`) reutiliza `generatedFiles()` de `src/sync.js` para detectar drift; sale con código 1 si hay problemas. `update` (`src/update.js`) compara contra las versiones de `plugins/*/.claude-plugin/plugin.json` (`src/kit.js`). Pendiente: pinear el marketplace a un tag del kit (`claude plugin marketplace add NorkutArg/norkut-agent-kit@v<versión>`) cuando se publique (T1.1); hoy sigue el branch por defecto.
-- Probar cambios del plugin en local: `claude plugin update` no refresca la copia en `~/.claude/plugins/cache/` sin bump de `version` en `plugin.json`; usar `claude plugin uninstall` + `install`. Con el marketplace local, `${CLAUDE_PLUGIN_ROOT}` resolvió a este repo, no al caché. `plugin.json` no declara rutas de componentes: se usan las ubicaciones por defecto (`skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`), que se autodescubren.
-- T0.9 hecha: hooks en `plugins/norkut-core/hooks/*.mjs` (detalle en su `README.md`). Verificado en una sesión real: `secret-guard` bloqueó un `Write` con `mongodb+srv://user:pass@` y `branch-guard` avisó en `git checkout -b feature/sin-id`. Probar hooks en local: repo del scratchpad con `git remote add origin git@github.com:NorkutArg/<x>.git`, porque fuera de `NorkutArg` no actúan.
-- Pendiente de Fase 0: probar `feature-kickoff`, `pr-review` y `promote-learning` sobre una tarea y un PR reales (T0.5).
-- Fase 1 · T1.1 pendiente: falta elegir registro (GitHub Packages exige renombrar a `@norkutarg/agent-kit`; Azure DevOps Artifacts mantiene `@norkut/agent-kit` pero suma un PAT de Azure). Publicar requiere push y tag `v<versión>`.
-- Skills `dod-check`, `event-contract-check`, `tenant-isolation-check` (referenciadas en README, templates y hooks) y los plugins `norkut-backend`/`frontend`/`pm`.
+## Estado actual
+Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al cerrar tareas.
 
-Actualizar esta sección al cerrar tareas.
+### Pendiente de prueba (la hace Diego, no bloquea seguir)
+- T0.5 / T1.3: `feature-kickoff`, `pr-review` y `promote-learning` end-to-end sobre una tarea de ClickUp y PRs reales. Estados y campos de ClickUp sin verificar contra la API (plan Free: 100 llamadas por día).
+- Skills `dod-check`, `event-contract-check` y `tenant-isolation-check`: construidos y cargan (`claude plugin details`), sin correr sobre un cambio real. Portan la lógica de `nk-tenant-audit` y `nk-event-contract` del workspace; fuera del workspace, `event-contract-check` busca con `gh search code --owner NorkutArg`.
+- T1.2: revisar con el Arquitecto los borradores de `CLAUDE.md` de `Module-Integrations` y `Front-Core` (12 preguntas `_completar con el Arquitecto_`) y abrir los PRs en esos repos.
+- Seguridad (fuera del kit): rotar el token de Azure DevOps de `Module-Integrations/docker-compose.yml` y las claves de su `.env` (commit `88f7837`), el `_password` de `Front-Core/.npmrc` (commit `f20f36b`) y revisar la API key de `Front-Core/public/env.js`. Avisar la query sin tenant de `mercadopago_api/.../order_repository.py:87`.
+- Push del kit a una rama + PR (todo el trabajo está solo en local).
+- Exportar `CLICKUP_API_TOKEN` y `GITHUB_TOKEN`: sin el primero el MCP `clickup` del plugin falla con 401.
+
+### Pendiente de decisión
+- T1.1: registro para publicar el CLI. GitHub Packages exige renombrar a `@norkutarg/agent-kit`; Azure DevOps Artifacts mantiene `@norkut/agent-kit` pero suma un PAT de Azure. Publicar requiere push y tag `v<versión>`; con eso, `init` debería agregar el marketplace pineado (`NorkutArg/norkut-agent-kit@v<versión>`).
+- Owners y verticales de `modules.md` (casi todos `_por definir_`); "Terraform" en el resumen de `MEMORY.md` sin evidencia en `repos/`.
+- Cursor no lee `CLAUDE.md` (solo `.cursor/rules/` y `AGENTS.md`), contra lo que dice `SPEC.md` §4.1. ¿Generar `AGENTS.md`? Choca con la regla del workspace.
+
+### Falta construir
+- T1.4: plugins `norkut-backend` y `norkut-frontend` (y `norkut-pm` en T2.2).
+
+### Cómo probar en local
+- CLI: `init` y los tests hablan con Claude Code solo vía `src/claude.js`; los tests reemplazan `claude` por `test-fixtures/fake-claude.js` en el `PATH` (fuera de `test/` porque `node --test` ejecuta todo `.js` bajo `test/`). `node bin/cli.js init --role pm --source ./`.
+- `sync`/`doctor`: sobre un clon en el scratchpad (`git clone -q repos/<Repo> <scratchpad>/<Repo>`), nunca sobre `repos/`. `doctor` reutiliza `generatedFiles()` de `src/sync.js`; `update` compara contra `plugins/*/.claude-plugin/plugin.json` (`src/kit.js`).
+- Plugin: `claude plugin update` no refresca la copia en `~/.claude/plugins/cache/` sin bump de `version`; usar `uninstall` + `install`. `plugin.json` no declara rutas: se autodescubren `skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`.
+- Hooks (`plugins/norkut-core/hooks/*.mjs`): solo actúan en repos con remoto `NorkutArg`; probar en un repo del scratchpad con `git remote add origin git@github.com:NorkutArg/<x>.git`.
+- Memoria: el relevamiento de colecciones y eventos (C# por carpetas `IntegrationEvents/`, Python por `urn:message:`, `message_name`, `exchange_name`) todavía no está versionado en el kit.
 
 ## Arquitectura en una foto
 Hay dos mundos: **este repo (el kit)** y **los repos destino** de `NorkutArg` donde corre el CLI. No confundirlos.

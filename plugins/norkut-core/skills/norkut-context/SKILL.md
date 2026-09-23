@@ -21,7 +21,7 @@ Lo que es propio de un solo repo (decisiones, gotchas locales) está en `.agent/
 
 ## Cómo responder
 - Citar el archivo de origen y la fecha/origen de la línea (`2026-09 · scan repos/`).
-- Colecciones y eventos salen de un relevamiento del código, no de una fuente oficial. Si hay que actuar sobre la respuesta (cambiar un esquema, tocar un evento) y los repos están disponibles, confirmarla con una búsqueda en el código o con el skill `nk-event-contract` del workspace.
+- Colecciones y eventos salen de un relevamiento del código, no de una fuente oficial. Si hay que actuar sobre la respuesta (cambiar un esquema, tocar un evento) y los repos están disponibles, confirmarla con una búsqueda en el código o con `/norkut-core:event-contract-check`.
 - Un nombre de colección declarado en varios repos no prueba acoplamiento real: aclararlo y sugerir confirmarlo con el owner.
 - Si un dato figura `_por definir_` o falta, decirlo tal cual y proponer `/norkut-core:promote-learning` cuando se averigüe. No inventar owners, verticales ni consumidores.
 

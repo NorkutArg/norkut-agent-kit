@@ -1,7 +1,7 @@
 # Módulos, repos, owners
 
 > Una fila por repo con lógica de negocio. "Emite" = eventos que consume **otro** repo (detalle y consumidores en `event-contracts.md`). Mapa completo de los 58 repos: `docs/repo-map.md` del workspace.
-> Colecciones y eventos salen de un scan de `repos/` (constantes `*/Constants/Collections.cs`; eventos .NET en carpetas `IntegrationEvents/Producers|Consumers/`, Python por `urn:message:IntegrationEvents.Events:`, `message_name` y `exchange_name`). Es un relevamiento, no una garantía: antes de tocar un evento correr `nk-event-contract`.
+> Colecciones y eventos salen de un scan de `repos/` (constantes `*/Constants/Collections.cs`; eventos .NET en carpetas `IntegrationEvents/Producers|Consumers/`, Python por `urn:message:IntegrationEvents.Events:`, `message_name` y `exchange_name`). Es un relevamiento, no una garantía: antes de tocar un evento correr `/norkut-core:event-contract-check`.
 
 - 2026-09 · scan repos/ · 14 repos .NET declaran 112 colecciones; 23 se repiten en más de un repo (tabla de abajo).
 - 2026-09 · docs/repo-map.md · Un repo ≠ un servicio: `Module-POS` tiene 6 servicios (PointOfSale, StoreOperation, FiscalOperation, Synchronization, ExternalExchangeRate, ApiGateway).

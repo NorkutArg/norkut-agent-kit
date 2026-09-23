@@ -12,7 +12,7 @@ Input: ID o URL de una tarea de ClickUp (Milestone o subtask), o una descripció
 1. **Leer la tarea** con el MCP de ClickUp: título, descripción, vertical (Folder), subtasks existentes, campo Risk, Target Date. Estados y campos válidos: `${CLAUDE_PLUGIN_ROOT}/memory/workflow.md`. El plan Free corta en 100 llamadas por día: pedir la tarea con subtasks en una sola llamada y no recorrer listas enteras.
 2. **Mapear impacto** con `norkut-context`:
    - Repos **y servicios** afectados (`${CLAUDE_PLUGIN_ROOT}/memory/modules.md`): un repo tiene varios servicios. Listar owners.
-   - Eventos de integración que emite o consume (`${CLAUDE_PLUGIN_ROOT}/memory/event-contracts.md`). Si un contrato cambia, listar **todos** los repos que tienen copia del record (incluidos productores Python y Lambdas) con `nk-event-contract` o una búsqueda cross-repo.
+   - Eventos de integración que emite o consume (`${CLAUDE_PLUGIN_ROOT}/memory/event-contracts.md`). Si un contrato cambia, listar **todos** los repos que tienen copia del record (incluidos productores Python y Lambdas) con `/norkut-core:event-contract-check`.
    - Colecciones Mongo que toca y si alguna figura en "Colecciones compartidas" de `modules.md`.
    - Componentes Python o Hangfire involucrados.
 3. **Riesgos**: pasar la feature por `${CLAUDE_PLUGIN_ROOT}/memory/risks.md` y marcar cuáles aplican y cómo se van a testear. Multitenant siempre se evalúa, aunque sea para descartarlo explícitamente.
