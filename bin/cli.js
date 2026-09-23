@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { Command } from 'commander';
 import { init, ROLES } from '../src/init.js';
+import { sync } from '../src/sync.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
@@ -38,7 +39,13 @@ program
 program
   .command('sync')
   .description('En la raíz de un repo: crea CLAUDE.md si falta, genera .claude/rules y .cursor/rules desde .agent/rules y copia el contexto compartido')
-  .action(notImplemented('T0.7'));
+  .action(() => {
+    try {
+      sync();
+    } catch (err) {
+      program.error(err.message);
+    }
+  });
 
 program
   .command('doctor')
