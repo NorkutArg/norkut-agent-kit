@@ -7,6 +7,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Agregado
 - T0.1: `package.json` del CLI `@norkut/agent-kit`, `bin/cli.js` con los comandos `init`, `sync`, `doctor` y `update` (todavía sin implementar), y `.claude-plugin/marketplace.json` inicial.
 
+### Agregado (memoria)
+- T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.
+
 ### Corregido
 - `plugin.json` de `norkut-core`: se quitan `skills`, `agents`, `hooks` y `mcpServers`, que apuntaban a las ubicaciones por defecto; `agents` como directorio hacía fallar `claude plugin validate`.
 
