@@ -27,6 +27,7 @@ beforeEach(() => {
     ...Object.fromEntries(requiredEnvVars().map((v) => [v, 'x'])),
   };
   writeFileSync(join(dir, '.npmrc'), '@norkutarg:registry=https://npm.pkg.github.com\n');
+  writeFileSync(join(dir, '.gitconfig'), '[user]\n\tname = Ana Perez\n');
   repo = join(dir, 'Module-X');
   mkdirSync(repo);
   spawnSync('git', ['init', '-q', repo]);
@@ -123,4 +124,11 @@ test('doctor reporta si npm no tiene el registry de @norkutarg', () => {
   init({ role: 'pm', env, log: quiet });
   writeFileSync(join(dir, '.npmrc'), '');
   assert.deepEqual(doctor({ cwd: dir, env, mcp: false, log: quiet }).problems.map((p) => p.slice(0, 50)), ['npm: falta `@norkutarg:registry=https://npm.pkg.gi']);
+});
+
+test('doctor reporta un git user.name de una sola palabra', () => {
+  init({ role: 'pm', env, log: quiet });
+  writeFileSync(join(dir, '.gitconfig'), '[user]\n\tname = Diego\n');
+  const { problems } = doctor({ cwd: dir, env, mcp: false, log: quiet });
+  assert.deepEqual(problems.map((p) => p.slice(0, 30)), ['git user.name es "Diego": la c']);
 });

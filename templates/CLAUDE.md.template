@@ -33,7 +33,7 @@ El contexto cross-repo (módulos, contratos de eventos, riesgos, workflow) viene
 ## Reglas de este repo
 - Toda query a Mongo filtra por tenant. `TenantId` sale del contexto, nunca del request.
 - Eventos de integración: solo cambios aditivos (propiedades nuevas nullable, sin `required`); si cambian productores o consumidores, PR a `event-contracts.md` del kit.
-- Branches: `<tipo>/CU-<id>-<slug>`.
+- Branches: `[<tipo>/]CU-<id>_<descripcion-corta>_<Nombre-Apellido>` (`/norkut-core:start-task` lo arma). Estado de la tarea desde un commit: `CU-<id>[<estado>]`, sin espacio.
 - Antes de mover a `qa testing`: `/norkut-core:dod-check` y `/norkut-core:pr-review` sin bloqueantes.
 
 ## Reglas por path

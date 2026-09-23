@@ -27,7 +27,7 @@ npx @norkutarg/agent-kit@latest update   # re-pinea el marketplace a la versión
 ```
 
 ## Skills principales
-- `norkut-core` (todos): `/norkut-core:feature-kickoff` · `/norkut-core:pr-review` · `/norkut-core:dod-check` · `/norkut-core:tenant-isolation-check` · `/norkut-core:event-contract-check` · `/norkut-core:promote-learning` · `norkut-context` (automático)
+- `norkut-core` (todos): `/norkut-core:feature-kickoff` · `/norkut-core:pr-review` · `/norkut-core:start-task` · `/norkut-core:dod-check` · `/norkut-core:tenant-isolation-check` · `/norkut-core:event-contract-check` · `/norkut-core:promote-learning` · `norkut-context` (automático)
 - `norkut-backend` (`--role backend`): `/norkut-backend:dotnet-module` · `/norkut-backend:mongo-collection`
 - `norkut-frontend` (`--role frontend`): `/norkut-frontend:angular-feature`
 - `norkut-pm` (`--role pm`): `/norkut-pm:status-report` · `/norkut-pm:daily-summary` (necesitan el conector de Google Drive de claude.ai)

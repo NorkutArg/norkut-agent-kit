@@ -91,3 +91,10 @@ test('ningún archivo del kit contiene credenciales', () => {
     for (const re of patterns) assert.doesNotMatch(text, re, `${file} matchea ${re}`);
   }
 });
+
+test('los estados de ClickUp de branch-guard coinciden con los de workflow.md', () => {
+  const line = read('plugins/norkut-core/memory/workflow.md').match(/^`(backlog →[^`]+)`$/m)[1];
+  const fromMemory = line.split('→').map((s) => s.trim().toLowerCase());
+  const fromHook = JSON.parse(read('plugins/norkut-core/hooks/branch-guard.mjs').match(/const STATUSES = (\[[^\]]+\]);/)[1].replaceAll("'", '"'));
+  assert.deepEqual(fromHook, fromMemory);
+});

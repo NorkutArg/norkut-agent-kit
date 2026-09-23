@@ -56,6 +56,11 @@ export function doctor({ cwd = process.cwd(), env = process.env, kitRoot = KIT_R
     else bad('npm: falta `@norkutarg:registry=https://npm.pkg.github.com` en ~/.npmrc (ver README). Sin eso no se puede actualizar el kit.');
   }
 
+  // El nombre del branch lleva `git config user.name` (Nombre-Apellido): memory/workflow.md.
+  const gitName = spawnSync('git', ['-C', cwd, 'config', 'user.name'], { env, encoding: 'utf8' }).stdout?.trim() ?? '';
+  if (gitName.split(/\s+/).filter(Boolean).length >= 2) ok(`git user.name: ${gitName}`);
+  else bad(`git user.name es "${gitName}": la convención de branches usa nombre y apellido (\`git config --global user.name "Nombre Apellido"\`).`);
+
   const missingEnv = requiredEnvVars(kitRoot).filter((v) => !env[v]);
   if (missingEnv.length) bad(`Faltan env vars: ${missingEnv.join(', ')}`);
   else ok('Env vars de los MCPs definidas');

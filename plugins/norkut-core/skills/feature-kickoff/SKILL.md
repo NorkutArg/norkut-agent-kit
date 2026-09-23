@@ -57,3 +57,4 @@ Input: ID o URL de una tarea de ClickUp (Milestone o subtask), o una descripció
 - No asumir ownership: si `modules.md` no lo dice, ponerlo como pregunta.
 - Un cambio de contrato no aditivo (renombrar o borrar propiedades, cambiar tipo, nombre del record, namespace o `EndpointName`) es Risk = Danger. Uno aditivo con propiedades nuevas `required` o no nullable, también.
 - El plan se valida con Arquitecto/PM antes de mover a `plan validated`. El skill solo mueve a `planning`.
+- Con el plan validado, el dev arranca con `/norkut-core:start-task`, que crea el branch con la convención y mueve la tarea a `in progress`.

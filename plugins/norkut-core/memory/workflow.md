@@ -20,7 +20,10 @@
 - 2026-09 · decisión · Bugs: lista "Inbox" a nivel Space, alimentada por Form con campo Origen (Cliente / Soporte / Interno / QA); triage diario los mueve al Folder de su vertical.
 
 ## Branches y PRs
-- 2026-09 · decisión · Nombre de branch: `<tipo>/CU-<id>-<slug>` (p. ej. `feature/CU-86abc123-sync-stock`). La integración GitHub–ClickUp linkea automáticamente si el ID está en el branch o en el título del PR.
+- 2026-09 · decisión · Nombre de branch: `[<tipo>/]CU-<id>_<descripcion-corta>_<Nombre-Apellido>`, p. ej. `CU-86e3cxn84_Scafolding-inicial_Diego-Ramirez` (el prefijo `feat/`, `fix/`… es opcional). Descripción: 2–5 palabras separadas por guiones, sin acentos. Nombre: `git config user.name` con espacios → guiones y sin acentos. `/norkut-core:start-task` lo arma solo.
+- 2026-09 · decisión · La integración GitHub–ClickUp vincula branch, commit y PR si el ID `CU-<id>` aparece en su nombre, mensaje, título o descripción.
+- 2026-09 · decisión · Estado desde un commit: `CU-<id>[<estado>]` en el mensaje, sin espacio entre el ID y el corchete, con un estado de la lista de arriba (sin distinguir mayúsculas), p. ej. `CU-86e3cxn84[in progress]`. Al empezar, `in progress`; al pasar a QA (después de `dod-check`), `qa testing`; `completed` y `Closed` según la tabla de transiciones.
+- 2026-09 · decisión · Excepción: los branches `memory/<slug>` de `promote-learning` no tienen tarea de ClickUp.
 - 2026-09 · decisión · PR: título con el ID, descripción con link a la tarea y checklist de `dod-check`.
 
 ## Roles

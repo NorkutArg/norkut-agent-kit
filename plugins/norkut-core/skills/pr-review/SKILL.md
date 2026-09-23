@@ -24,7 +24,7 @@ Input: URL o número de PR y repo. Si no está dado, usar el branch actual.
 | Paquetes | Paquetes y versiones nuevas existen de verdad; verificar contra `.csproj` / `package.json` / `requirements.txt` del servicio |
 | Tests | Tests en `*.Tests` espejando la capa; test explícito de aislamiento de tenant si tocó DAOs |
 | Hangfire | Jobs nuevos: idempotentes, con reintentos acotados; el storage es en memoria (`${CLAUDE_PLUGIN_ROOT}/memory/gotchas.md`) |
-| ClickUp | Branch/PR con ID `CU-xxxx` (`${CLAUDE_PLUGIN_ROOT}/memory/workflow.md`); la tarea está en `in progress` |
+| ClickUp | Branch `[<tipo>/]CU-<id>_<descripcion>_<Nombre-Apellido>` y PR con `CU-<id>` (`${CLAUDE_PLUGIN_ROOT}/memory/workflow.md`); la tarea está en `in progress`; los `CU-<id>[<estado>]` de los commits usan estados que existen |
 | Tamaño | > 400 líneas de diff sin justificación → sugerir partir |
 
 3. **Riesgo global** del PR: Normal / Warning / Danger, con una línea de justificación.

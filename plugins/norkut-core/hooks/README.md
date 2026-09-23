@@ -11,4 +11,4 @@
 | `secret-guard.mjs` | bloquea | `Write`/`Edit` cuyo texto nuevo tenga `mongodb(+srv)://usuario:clave@`, `ghp_…`/`github_pat_…`, `AKIA…`, o `Password=` literal en una connection string (se permiten placeholders `${…}`) |
 | `tenant-guard.mjs` | aviso | Archivo `*Repository*.cs`, `*Handler*.cs` o `*Dao*.cs` cuyo texto nuevo arma una query (`MongoDbQueryBuilder`, `.InCollection(`, `Find(`, `Filter.`) sin `.WithTenant(`, `.NonTenant(`, `TenantId` ni `SubscriptionId` |
 | `contract-guard.mjs` | aviso | Archivo `.cs` bajo `IntegrationEvents/` → recordar que solo se permiten cambios aditivos y listar productores y consumidores |
-| `branch-guard.mjs` | aviso | `git checkout -b`, `git switch -c` o `git push` sobre un branch (salvo `main`/`master`/`develop`) sin `CU-<id>` |
+| `branch-guard.mjs` | aviso | Branch creado (`git checkout -b`, `git switch -c`, `git branch`) o pusheado que no sigue `[<tipo>/]CU-<id>_<descripcion>_<Nombre-Apellido>` (salvo `main`/`master`/`develop` y `memory/*`); sugiere el nombre con `git config user.name`. En `git commit`, un `CU-<id>[<estado>]` con un estado que no existe en ClickUp o con espacio antes del corchete |

@@ -15,13 +15,13 @@ Input: ID o URL de la tarea de ClickUp (`CU-xxxx`), o el branch/PR actual (el ID
    - Si ClickUp no responde o se alcanzó el límite, seguir con lo que haya y marcar esos ítems como "sin verificar".
 2. **Recorrer el checklist** (✅ / ❌ / ⚠️ sin verificar / n/a), con evidencia concreta por ítem (link, archivo, comando).
 3. **Veredicto**: `lista para qa testing` solo si no hay ❌. Un ⚠️ en tenant, contratos o secretos cuenta como ❌.
-4. **No mover la tarea** sin confirmación del usuario. Con confirmación: mover a `qa testing` y comentar el checklist en la tarea.
+4. **No mover la tarea** sin confirmación del usuario. Con confirmación: mover a `qa testing` y comentar el checklist en la tarea. Alternativa sin MCP: un commit `CU-<id>[qa testing]` pusheado al branch de la tarea.
 
 ## Checklist
 
 | # | Ítem | Cómo se verifica |
 |---|---|---|
-| 1 | Branch y PR con `CU-<id>` | Nombre del branch o título del PR; la integración GitHub–ClickUp lo muestra en la tarea |
+| 1 | Branch `[<tipo>/]CU-<id>_<descripcion>_<Nombre-Apellido>` y PR con `CU-<id>` | Nombre del branch o título del PR; la integración GitHub–ClickUp lo muestra en la tarea |
 | 2 | PR mergeado al branch por defecto real de cada repo | `gh pr view <n> --json state,mergedAt,baseRefName`; no asumir `main` |
 | 3 | `pr-review` sin bloqueantes | Comentario del review en el PR, o correr `/norkut-core:pr-review` ahora |
 | 4 | Aislamiento de tenant | Si el cambio tocó persistencia: `/norkut-core:tenant-isolation-check` sin críticos |
@@ -43,7 +43,7 @@ Input: ID o URL de la tarea de ClickUp (`CU-xxxx`), o el branch/PR actual (el ID
 
 | # | Ítem | Estado | Evidencia |
 |---|---|---|---|
-| 1 | Branch y PR con CU-id | ✅ | feature/CU-86abc123-… · PR #45 |
+| 1 | Branch y PR con CU-id | ✅ | CU-86abc123_Sync-stock_Ana-Perez · PR #45 |
 …
 
 ### Qué falta

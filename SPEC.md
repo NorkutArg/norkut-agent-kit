@@ -147,7 +147,7 @@ Para Cursor, `sync` genera `.cursor/rules/00-norkut-context.mdc` (`alwaysApply: 
 |---|---|---|
 | `tenant-guard` | `PreToolUse` en `Edit`/`Write` sobre `**/*Repository*.cs`, `**/*Handler*.cs`, `**/*Dao*.cs` | Recuerda (no bloquea) que toda query a Mongo debe filtrar por tenant y sugiere correr `tenant-isolation-check` |
 | `contract-guard` | `PreToolUse` en `Edit`/`Write` sobre archivos de eventos de integración | Recuerda la regla del contrato (solo cambios aditivos, sin renombrar tipo, namespace ni `EndpointName`) y pide listar productores y consumidores. Los eventos no tienen versión: el contrato es namespace + nombre del `record` |
-| `branch-guard` | `PreToolUse` en `Bash` con `git checkout -b` / `git push` | Avisa si el branch no contiene un ID de ClickUp (`CU-xxxx`), para que la integración GitHub–ClickUp linkee solo |
+| `branch-guard` | `PreToolUse` en `Bash` con `git checkout -b` / `git switch -c` / `git branch` / `git push` / `git commit` | Avisa si el branch no sigue `[<tipo>/]CU-<id>_<descripcion>_<Nombre-Apellido>` o si un commit usa `CU-<id>[<estado>]` con un estado inexistente, para que la integración GitHub–ClickUp linkee solo |
 | `secret-guard` | `PreToolUse` en `Write` | Bloquea escrituras que matcheen patrones de tokens/connection strings |
 
 Los hooks empiezan en modo aviso salvo `secret-guard`. Se endurecen cuando el equipo los adopta. Solo actúan en repos con remoto `NorkutArg`, porque el plugin corre en todos los proyectos del dev.
@@ -167,6 +167,7 @@ Los hooks empiezan en modo aviso salvo `secret-guard`. Se endurecen cuando el eq
 | `norkut-context` | core | Carga la memoria cross-repo según la pregunta |
 | `feature-kickoff` | core | Toma una tarea de ClickUp, identifica repos y módulos afectados, contratos que toca, riesgos, y produce un plan para validar con Arquitecto/PM. Mueve la tarea a `planning` |
 | `pr-review` | core | Review de un PR contra `risks.md` + DoD. Output: comentario estructurado listo para pegar en GitHub |
+| `start-task` | core | Crea el branch `[<tipo>/]CU-<id>_<descripcion>_<Nombre-Apellido>` desde el branch por defecto y propone el commit `CU-<id>[in progress]` |
 | `dod-check` | core | Checklist de definition of done antes de mover a `qa testing` |
 | `event-contract-check` | core | Diff de contratos de eventos entre la rama y `event-contracts.md` |
 | `tenant-isolation-check` | core | Busca queries sin filtro de tenant en el diff |

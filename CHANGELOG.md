@@ -8,6 +8,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.1: `package.json` del CLI `@norkut/agent-kit`, `bin/cli.js` con los comandos `init`, `sync`, `doctor` y `update` (todavía sin implementar), y `.claude-plugin/marketplace.json` inicial.
 
 ### Agregado (CLI)
+- `doctor` avisa si `git config user.name` no tiene nombre y apellido (lo usa el nombre del branch).
 - T1.1: el paquete se publica en GitHub Packages como `@norkutarg/agent-kit` (antes `@norkut/agent-kit`). Workflow `release` al pushear `v<versión>`. `init` agrega el marketplace pineado a `NorkutArg/norkut-agent-kit@v<versión>` y `update` lo re-pinea (salvo un marketplace local de desarrollo). `doctor` verifica el registry de `@norkutarg` en npm.
 - `sync` siembra en `.agent/rules/` solo las reglas base del stack del repo (`stacks:` en el frontmatter; `dotnet`, `angular`, `python`; sin stack detectado, todas). Nueva regla base `python-services.md`.
 - `sync` genera `.cursor/rules/01-repo-instructions.mdc`, que le adjunta a Cursor el `CLAUDE.md` y la memoria del repo por referencia (Cursor no lee `CLAUDE.md`).
@@ -24,11 +25,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.
 
 ### Agregado (skills)
+- `start-task` en `norkut-core`: crea el branch `[<tipo>/]CU-<id>_<descripcion-corta>_<Nombre-Apellido>` desde el branch por defecto y propone el commit `CU-<id>[in progress]`.
 - T2.2: plugin `norkut-pm` con `status-report` (período) y `daily-summary` (un día), a partir de las transcripciones Tactiq en Google Drive. Migra y amplía el skill `norkut-status-report`.
 - T1.4: plugins `norkut-backend` (`dotnet-module`, `mongo-collection`) y `norkut-frontend` (`angular-feature`), registrados en el marketplace. Dependen de `norkut-core`.
 - `tenant-isolation-check`, `event-contract-check` y `dod-check` en `norkut-core`. Los dos primeros portan `nk-tenant-audit` y `nk-event-contract` del workspace para que funcionen desde un solo repo (fallback a `gh search code`) y suman las formas Python de PyMassTransit. Hooks, `pr-review`, memoria y templates apuntan a ellos en vez de a los skills del workspace.
 
 ### Cambiado (skills)
+- Convención de branches `[<tipo>/]CU-<id>_<descripcion-corta>_<Nombre-Apellido>` (antes `<tipo>/CU-<id>-<slug>`) y estados desde commits `CU-<id>[<estado>]` en `workflow.md`, template de `CLAUDE.md`, `dod-check`, `pr-review` y `feature-kickoff`. `branch-guard` valida el formato (también en `git branch`), sugiere el nombre y avisa si un commit usa un estado que no existe o un espacio antes del corchete.
 - T0.4: `norkut-context` apunta a los archivos con `${CLAUDE_PLUGIN_ROOT}/memory/`, separa colecciones compartidas de eventos, y pide confirmar en el código antes de actuar sobre datos del relevamiento.
 
 - T0.5: `feature-kickoff`, `pr-review` y `promote-learning` usan rutas `${CLAUDE_PLUGIN_ROOT}/memory/`, las reglas reales de contratos de eventos (solo aditivos, sin versión) y los chequeos de capas, conector e idempotencia de `docs/`; cuidan el límite diario del MCP de ClickUp.

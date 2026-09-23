@@ -57,24 +57,50 @@ test('secret-guard evalúa archivos nuevos en carpetas que todavía no existen',
   assert.equal(hook('secret-guard', 'Write', write('nueva/carpeta/x.json', 'mongodb://u:p@h')).status, 2);
 });
 
-test('branch-guard avisa en git checkout -b sin ID de ClickUp', () => {
-  const r = hook('branch-guard', 'Bash', { command: 'git checkout -b feature/sin-id' });
-  assert.equal(r.status, 0);
-  assert.match(r.out.systemMessage, /feature\/sin-id.*no tiene ID de ClickUp/);
-  assert.equal(r.out.hookSpecificOutput.additionalContext, r.out.systemMessage);
+const bash = (command, cwd) => hook('branch-guard', 'Bash', { command }, cwd).out;
+
+test('branch-guard acepta CU-<id>_<descripcion>_<Nombre-Apellido>, con o sin prefijo', () => {
+  for (const b of ['CU-86e3cxn84_Scafolding-inicial_Diego-Ramirez', 'feat/CU-86e3cxn84_Scafolding-inicial_Diego-Ramirez', 'CU-abc123_Prueba_Diego']) {
+    assert.equal(bash(`git checkout -b ${b}`), null, b);
+  }
+  assert.equal(bash('git switch -c fix/CU-abc123_Arreglo-login_Ana-Perez'), null);
 });
 
-test('branch-guard no avisa con ID, en otros comandos ni fuera de NorkutArg', () => {
-  assert.equal(hook('branch-guard', 'Bash', { command: 'git switch -c feature/CU-86abc123-sync' }).out, null);
-  assert.equal(hook('branch-guard', 'Bash', { command: 'git status' }).out, null);
-  assert.equal(hook('branch-guard', 'Bash', { command: 'git checkout -b feature/sin-id' }, other).out, null);
+test('branch-guard avisa si el branch no sigue el formato, con una sugerencia armada con git config user.name', () => {
+  spawnSync('git', ['-C', norkut, 'config', 'user.name', 'Diego Ramírez']);
+  for (const b of ['feature/sin-id', 'feature/CU-86abc123-sync-stock', 'CU-86abc123_sin-usuario']) {
+    const out = bash(`git checkout -b ${b}`);
+    assert.match(out.systemMessage, /no sigue el formato/, b);
+    assert.equal(out.hookSpecificOutput.additionalContext, out.systemMessage);
+  }
+  assert.match(bash('git checkout -b feature/CU-86abc123-sync-stock').systemMessage, /`CU-86abc123_<descripcion-corta>_Diego-Ramirez`/);
+  assert.match(bash('git branch otra-cosa').systemMessage, /otra-cosa/);
+});
+
+test('branch-guard no avisa en otros comandos, en memory/*, ni fuera de NorkutArg', () => {
+  assert.equal(bash('git status'), null);
+  assert.equal(bash('git branch -d viejo'), null);
+  assert.equal(bash('git checkout -b memory/gotcha-hangfire'), null);
+  assert.equal(bash('git checkout -b feature/sin-id', other), null);
 });
 
 test('branch-guard revisa el branch actual en git push y omite main', () => {
   spawnSync('git', ['-C', norkut, 'checkout', '-q', '-b', 'fix/sin-id']);
-  assert.match(hook('branch-guard', 'Bash', { command: 'git push -u origin HEAD' }).out.systemMessage, /fix\/sin-id/);
+  assert.match(bash('git push -u origin HEAD').systemMessage, /fix\/sin-id/);
   spawnSync('git', ['-C', norkut, 'checkout', '-q', '-b', 'main']);
-  assert.equal(hook('branch-guard', 'Bash', { command: 'git push' }).out, null);
+  assert.equal(bash('git push'), null);
+});
+
+test('branch-guard valida el estado de ClickUp en los mensajes de commit', () => {
+  assert.equal(bash('git commit --allow-empty -m "CU-86e3cxn84[COMPLETED]"'), null);
+  assert.equal(bash('git commit -m "CU-86e3cxn84[in progress] arranca la tarea"'), null);
+  assert.equal(bash('git commit -m "sin tarea"'), null);
+  assert.match(bash('git commit -m "CU-86e3cxn84[terminado]"').systemMessage, /"terminado" no es un estado de ClickUp/);
+  assert.match(bash('git commit -m "CU-86e3cxn84 [completed]"').systemMessage, /espacio entre el ID y el corchete/);
+  // Con opciones globales de git antes del subcomando (caso real encontrado en una sesión).
+  assert.match(bash('git -c user.email=t@t commit --allow-empty -m "CU-abc123[inexistente]"').systemMessage, /"inexistente" no es un estado/);
+  assert.match(bash(`git -C ${norkut} checkout -b sin-formato`).systemMessage, /sin-formato/);
+  assert.match(bash('git --no-pager branch otra-cosa').systemMessage, /otra-cosa/);
 });
 
 test('tenant-guard avisa en un DAO con query sin tenant', () => {
