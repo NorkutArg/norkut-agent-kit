@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 import { readFileSync } from 'node:fs';
 import { Command } from 'commander';
+import { init, ROLES } from '../src/init.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-
-const ROLES = ['backend', 'frontend', 'pm'];
 
 function notImplemented(task) {
   return () => {
@@ -24,11 +23,16 @@ program
   .command('init')
   .description('Configura la máquina del dev: marketplace, plugins norkut-core + rol, MCPs y env vars faltantes')
   .requiredOption('--role <role>', `rol del dev (${ROLES.join('|')})`)
+  .option('--source <source>', 'origen del marketplace (repo de GitHub o ruta local)')
   .action((opts) => {
     if (!ROLES.includes(opts.role)) {
       program.error(`--role inválido: "${opts.role}". Opciones: ${ROLES.join(', ')}`);
     }
-    notImplemented('T0.6')();
+    try {
+      init({ role: opts.role, source: opts.source });
+    } catch (err) {
+      program.error(err.message);
+    }
   });
 
 program

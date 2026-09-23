@@ -94,7 +94,7 @@ norkut-agent-kit/
 
 | Comando | Qué hace |
 |---|---|
-| `init` | Verifica Claude Code y Cursor instalados; agrega el marketplace; instala `norkut-core` + el plugin del rol (`backend`/`frontend`/`pm`); mergea `.mcp.json` en `~/.claude` sin pisar servers existentes; crea `~/.claude/CLAUDE.md` si no existe con un import al kit; imprime qué env vars faltan |
+| `init` | Verifica Claude Code y Cursor instalados; agrega el marketplace; instala `norkut-core` + el plugin del rol (`backend`/`frontend`/`pm`); imprime qué env vars faltan para los MCPs del plugin. No escribe config de MCP propia (los MCPs viajan en el plugin) ni `~/.claude/CLAUDE.md` |
 | `sync` | En la raíz de un repo: crea `CLAUDE.md` desde template si no existe (nunca lo pisa), regenera `.claude/rules/` y `.cursor/rules/` desde `.agent/rules/`, crea `.agent/memory/MEMORY.md` si falta, agrega el snippet al `.gitignore` |
 | `doctor` | Reporta versión del kit, plugins instalados, MCPs alcanzables, env vars faltantes, drift entre `.agent/rules/` y los generados |
 | `update` | `claude plugin update` de los plugins Norkut + reinstala la versión pineada |

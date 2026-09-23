@@ -6,7 +6,7 @@ Harness de IA del equipo Norkut para Claude Code + Cursor.
 ```bash
 npx @norkut/agent-kit init --role backend|frontend|pm
 ```
-Exportar las env vars que `init` reporte como faltantes (`CLICKUP_API_TOKEN`, `GITHUB_TOKEN`, `MONGO_RO_URI`).
+Exportar las env vars que `init` reporte como faltantes (hoy `CLICKUP_API_TOKEN` y `GITHUB_TOKEN`).
 
 ## En cada repo
 ```bash

@@ -29,9 +29,9 @@ Cada tarea tiene criterio de aceptación. Trabajar en orden; una tarea por sesi�
 ### T0.6 CLI `init`
 - Detectar Claude Code (`claude --version`) y Cursor.
 - Agregar marketplace, instalar `norkut-core` + plugin por rol (flag `--role backend|frontend|pm`).
-- Mergear `.mcp.json` en `~/.claude/.mcp.json` sin pisar entradas existentes (merge por nombre de server).
-- Crear `~/.claude/CLAUDE.md` si no existe, con una línea de import al README del kit.
-- Listar env vars faltantes (`CLICKUP_API_TOKEN`, `GITHUB_TOKEN`, `MONGO_RO_URI`).
+- ~~Mergear `.mcp.json` en `~/.claude/.mcp.json`~~: descartado (2026-09). Claude Code no lee ese archivo (los MCP de usuario viven en `~/.claude.json`) y el plugin `norkut-core` ya entrega sus MCPs.
+- ~~Crear `~/.claude/CLAUDE.md` con import al README del kit~~: descartado (2026-09). Cargaría instrucciones de instalación en todas las sesiones; el contexto llega por `norkut-context` y el `CLAUDE.md` de cada repo.
+- Listar env vars faltantes: las que referencia como `${VAR}` el `.mcp.json` de `norkut-core` (hoy `CLICKUP_API_TOKEN`, `GITHUB_TOKEN`; `MONGO_RO_URI` cuando entre el MCP de Mongo, ver `SPEC.md` §9).
 - **Acepta**: corrida idempotente (segunda ejecución no cambia nada); en máquina limpia termina en < 5 min.
 
 ### T0.7 CLI `sync`

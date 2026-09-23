@@ -7,6 +7,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Agregado
 - T0.1: `package.json` del CLI `@norkut/agent-kit`, `bin/cli.js` con los comandos `init`, `sync`, `doctor` y `update` (todavía sin implementar), y `.claude-plugin/marketplace.json` inicial.
 
+### Agregado (CLI)
+- T0.6: `init --role backend|frontend|pm [--source <repo o ruta>]`. Verifica Claude Code y Cursor, agrega el marketplace `norkut` si falta, instala `norkut-core` y el plugin del rol si ya existe en el marketplace, y lista las env vars faltantes de los MCPs. Idempotente.
+
 ### Agregado (memoria)
 - T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.
 
