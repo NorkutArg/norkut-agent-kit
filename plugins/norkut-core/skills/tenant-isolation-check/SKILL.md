@@ -58,7 +58,7 @@ Regla: **toda query filtra por tenant, y todo pipeline arranca con un `$match` q
 
 Hallazgos:
 - Pipeline cuyo primer stage no es `$match`, o cuyo `$match` no incluye el tenant → **crítico**.
-- `find()` / `find_one()` / `update_*` / `delete_*` por `_id` u otra clave sin tenant, en un endpoint que responde a un cliente → **crítico**. Caso real conocido: `Module-Integrations/mercadopago_api/.../order_repository.py`, que busca órdenes por `PosId` + `_id`.
+- `find()` / `find_one()` / `update_*` / `delete_*` por `_id` u otra clave sin tenant, en un endpoint que responde a un cliente → **crítico**.
 - Helper que arma condiciones sin recibir el tenant: verificar que el llamador lo agregue.
 - Tenant tomado del body en vez del header o del token.
 - Colección nueva **sin campo de tenant** → alto: no se puede filtrar después.
