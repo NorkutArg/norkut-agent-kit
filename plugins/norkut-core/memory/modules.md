@@ -1,7 +1,7 @@
 # Módulos, repos, owners
 
 > Una fila por repo con lógica de negocio. "Emite" = eventos que consume **otro** repo (detalle y consumidores en `event-contracts.md`). Mapa completo de los 58 repos: `docs/repo-map.md` del workspace.
-> Colecciones y eventos salen de un scan de `repos/` (constantes `*/Constants/Collections.cs` y carpetas `IntegrationEvents/Producers|Consumers/`). Es un relevamiento, no una garantía: antes de tocar un evento correr `nk-event-contract`.
+> Colecciones y eventos salen de un scan de `repos/` (constantes `*/Constants/Collections.cs`; eventos .NET en carpetas `IntegrationEvents/Producers|Consumers/`, Python por `urn:message:IntegrationEvents.Events:`, `message_name` y `exchange_name`). Es un relevamiento, no una garantía: antes de tocar un evento correr `nk-event-contract`.
 
 - 2026-09 · scan repos/ · 14 repos .NET declaran 112 colecciones; 23 se repiten en más de un repo (tabla de abajo).
 - 2026-09 · docs/repo-map.md · Un repo ≠ un servicio: `Module-POS` tiene 6 servicios (PointOfSale, StoreOperation, FiscalOperation, Synchronization, ExternalExchangeRate, ApiGateway).
@@ -34,8 +34,10 @@
 | Repo | Qué es | Vertical ClickUp | Owner | Notas |
 |---|---|---|---|---|
 | CloudFunctions | Lambdas (`pos-logs-integration`, cognito-*, …) | transversal | _por definir_ | **Productor** de InvoiceEmitted, CustomerChanged, ShiftEmitted, ZetaReportEmitted, MerchantEmitted (string literal en Python) |
-| Module-Integrations | Integraciones (Python) | Integraciones | _por definir_ | |
-| Module-IA | IA · RAG, agentes, pipelines Airflow | Reposición Inteligente | _por definir_ | |
+| Module-Integrations | Integraciones (Python): mercadolibre_api, mercadopago_api, modo, clover, bitrix_api, integration_management, api_gateway | Integraciones | _por definir_ | Emite AdjustStock, IntegrateStore, IntegrateUser, ShiftEmitted, IntegrationManagementCreate/Disable. Consume StoreChanged, SalePointChanged, SubscriptionCreated, ProductChanged, CountCompleted, Transfer*, PurchaseOrder*. Colecciones propias en su base `mercadopago` (`users`, `stores` no son las de .NET) |
+| Module-IA | IA · RAG, agentes, pipelines Airflow | Reposición Inteligente | _por definir_ | Consume (servicio `api`) InvoiceEmitted, ProductChanged, CustomerChanged, CampaignChanged, StoreConfigUpdated |
+| Module-Insights | Insights (Python) | _por definir_ | _por definir_ | Consume TransferSent, TransferReceived, TransferCancelled |
+| Module-UMS | UMS · metering (Python) | _por definir_ | _por definir_ | Consume SubscriptionCreated, SubscriptionUpdated |
 | PointOfSaleApp | App POS (Flutter) | POS | _por definir_ | offline-first; conflict resolution _por documentar_ |
 | MessagesSender | Librería NuGet de envío de mensajes | transversal | _por definir_ | |
 | Front-Core | Shell Angular; consume las libs `@mele/*` | transversal | _por definir_ | un cambio en `FrontFeatures-*` no llega a prod sin publicar el paquete y subir la versión acá |

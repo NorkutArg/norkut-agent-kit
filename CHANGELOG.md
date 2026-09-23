@@ -14,6 +14,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.9: hooks `secret-guard` (bloquea credenciales), `tenant-guard`, `contract-guard` y `branch-guard` (avisos). Solo actúan en repos con remoto `NorkutArg`. `hooks.json` vuelve a tenerlos.
 
 ### Agregado (memoria)
+- `event-contracts.md` y `modules.md`: el relevamiento ahora detecta productores y consumidores Python (PyMassTransit: `urn:message:IntegrationEvents.Events:`, `message_name`, `exchange_name`). Suma Module-Integrations, Module-IA, Module-Insights y Module-UMS; 115 eventos en total.
 - T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.
 
 ### Cambiado (skills)

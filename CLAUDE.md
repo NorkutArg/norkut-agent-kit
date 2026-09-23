@@ -22,6 +22,7 @@ T0.1 hecha: `bin/cli.js` expone `init|sync|doctor|update`. Faltan, entre otros:
 - Probar cambios del plugin en local: `claude plugin update` no refresca la copia en `~/.claude/plugins/cache/` sin bump de `version` en `plugin.json`; usar `claude plugin uninstall` + `install`. Con el marketplace local, `${CLAUDE_PLUGIN_ROOT}` resolvió a este repo, no al caché. `plugin.json` no declara rutas de componentes: se usan las ubicaciones por defecto (`skills/`, `agents/`, `hooks/hooks.json`, `.mcp.json`), que se autodescubren.
 - T0.9 hecha: hooks en `plugins/norkut-core/hooks/*.mjs` (detalle en su `README.md`). Verificado en una sesión real: `secret-guard` bloqueó un `Write` con `mongodb+srv://user:pass@` y `branch-guard` avisó en `git checkout -b feature/sin-id`. Probar hooks en local: repo del scratchpad con `git remote add origin git@github.com:NorkutArg/<x>.git`, porque fuera de `NorkutArg` no actúan.
 - Pendiente de Fase 0: probar `feature-kickoff`, `pr-review` y `promote-learning` sobre una tarea y un PR reales (T0.5).
+- Fase 1 · T1.1 pendiente: falta elegir registro (GitHub Packages exige renombrar a `@norkutarg/agent-kit`; Azure DevOps Artifacts mantiene `@norkut/agent-kit` pero suma un PAT de Azure). Publicar requiere push y tag `v<versión>`.
 - Skills `dod-check`, `event-contract-check`, `tenant-isolation-check` (referenciadas en README, templates y hooks) y los plugins `norkut-backend`/`frontend`/`pm`.
 
 Actualizar esta sección al cerrar tareas.
