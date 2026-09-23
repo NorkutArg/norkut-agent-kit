@@ -143,12 +143,12 @@ Para Cursor, `sync` genera `.cursor/rules/00-norkut-context.mdc` (`alwaysApply: 
 
 | Hook | Trigger | Acción |
 |---|---|---|
-| `tenant-guard` | `PreToolUse` en `Edit`/`Write` sobre `**/*Repository*.cs`, `**/*Handler*.cs` | Recuerda (no bloquea) que toda query a Mongo debe filtrar por tenant y sugiere correr `tenant-isolation-check` |
-| `contract-guard` | `PreToolUse` en `Edit`/`Write` sobre archivos de eventos de integración | Bloquea si el cambio no viene con bump de versión del contrato o nota en `event-contracts.md` |
+| `tenant-guard` | `PreToolUse` en `Edit`/`Write` sobre `**/*Repository*.cs`, `**/*Handler*.cs`, `**/*Dao*.cs` | Recuerda (no bloquea) que toda query a Mongo debe filtrar por tenant y sugiere correr `tenant-isolation-check` |
+| `contract-guard` | `PreToolUse` en `Edit`/`Write` sobre archivos de eventos de integración | Recuerda la regla del contrato (solo cambios aditivos, sin renombrar tipo, namespace ni `EndpointName`) y pide listar productores y consumidores. Los eventos no tienen versión: el contrato es namespace + nombre del `record` |
 | `branch-guard` | `PreToolUse` en `Bash` con `git checkout -b` / `git push` | Avisa si el branch no contiene un ID de ClickUp (`CU-xxxx`), para que la integración GitHub–ClickUp linkee solo |
 | `secret-guard` | `PreToolUse` en `Write` | Bloquea escrituras que matcheen patrones de tokens/connection strings |
 
-Los hooks empiezan en modo aviso salvo `secret-guard`. Se endurecen cuando el equipo los adopta.
+Los hooks empiezan en modo aviso salvo `secret-guard`. Se endurecen cuando el equipo los adopta. Solo actúan en repos con remoto `NorkutArg`, porque el plugin corre en todos los proyectos del dev.
 
 ### 4.7 MCPs incluidos
 

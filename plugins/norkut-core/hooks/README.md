@@ -1,10 +1,14 @@
 # Hooks
 
-Cada script lee el JSON del tool call por stdin. Verificar el esquema de I/O vigente en https://code.claude.com/docs/en/hooks antes de implementar (exit codes, `hookSpecificOutput`, `permissionDecision`).
+`PreToolUse`, configurados en `hooks.json`. Cada script lee el JSON del tool call por stdin (`tool_input.file_path`, `content`, `new_string`, `edits[]`, `command`). Esquema de I/O: https://code.claude.com/docs/en/hooks.
 
-| Script | Modo inicial | Regla |
+- Son `.mjs` porque corren desde la copia del plugin en `~/.claude/plugins/cache/`, donde no hay `package.json` con `"type": "module"`.
+- Solo actúan en repos cuyo remoto es de `NorkutArg` (`lib.mjs` → `isNorkutRepo`): el plugin se instala a scope usuario y corre en todos los proyectos del dev.
+- Bloquear: exit 2 + `permissionDecision: "deny"`. Avisar: exit 0 + `systemMessage` (lo ve el dev) y `additionalContext` (lo ve Claude).
+
+| Script | Modo | Regla |
 |---|---|---|
-| `secret-guard.js` | bloquea | Contenido que matchee `mongodb(\+srv)?://[^:]+:[^@]+@`, `ghp_[A-Za-z0-9]{36}`, `AKIA[0-9A-Z]{16}`, `Password=` dentro de connection strings |
-| `tenant-guard.js` | aviso | Archivo matchea `**/*Repository*.cs` o `**/*Handler*.cs` y el contenido tiene `Find(`/`Filter.` sin `TenantId` cerca → sugerir `/norkut-core:tenant-isolation-check` |
-| `contract-guard.js` | aviso | Archivo en rutas de eventos de integración (globs reales en `memory/event-contracts.md`) → recordar que solo se permiten cambios aditivos y actualizar `event-contracts.md` si cambian productores o consumidores |
-| `branch-guard.js` | aviso | Comando contiene `git checkout -b` o `git push` y el branch no contiene `CU-[a-z0-9]+` → recordar el ID de ClickUp para que la integración GitHub–ClickUp linkee solo |
+| `secret-guard.mjs` | bloquea | `Write`/`Edit` cuyo texto nuevo tenga `mongodb(+srv)://usuario:clave@`, `ghp_…`/`github_pat_…`, `AKIA…`, o `Password=` literal en una connection string (se permiten placeholders `${…}`) |
+| `tenant-guard.mjs` | aviso | Archivo `*Repository*.cs`, `*Handler*.cs` o `*Dao*.cs` cuyo texto nuevo arma una query (`MongoDbQueryBuilder`, `.InCollection(`, `Find(`, `Filter.`) sin `.WithTenant(`, `.NonTenant(`, `TenantId` ni `SubscriptionId` |
+| `contract-guard.mjs` | aviso | Archivo `.cs` bajo `IntegrationEvents/` → recordar que solo se permiten cambios aditivos y listar productores y consumidores |
+| `branch-guard.mjs` | aviso | `git checkout -b`, `git switch -c` o `git push` sobre un branch (salvo `main`/`master`/`develop`) sin `CU-<id>` |
