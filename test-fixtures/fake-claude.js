@@ -13,15 +13,19 @@ const cmd = args.filter((a) => !a.startsWith('--')).join(' ');
 if (args[0] === '--version') {
   console.log('2.1.280 (Claude Code)');
 } else if (cmd === 'plugin marketplace list') {
-  console.log(JSON.stringify(state.marketplaces.map((name) => ({ name }))));
+  // Formato de `claude plugin marketplace list --json`: source 'github' (repo) o 'directory' (path).
+  console.log(JSON.stringify(state.marketplaces.map((m) => (typeof m === 'string' ? { name: m, source: 'github', repo: 'NorkutArg/norkut-agent-kit' } : m))));
 } else if (cmd.startsWith('plugin marketplace add ')) {
-  state.marketplaces.push('norkut');
+  // Agregar con el mismo nombre reemplaza el marketplace existente (como Claude Code).
+  const src = args[3];
+  const entry = src.startsWith('.') || src.startsWith('/') ? { name: 'norkut', source: 'directory', path: src } : { name: 'norkut', source: 'github', repo: src };
+  state.marketplaces = state.marketplaces.filter((m) => (m.name ?? m) !== 'norkut').concat(entry);
   save();
 } else if (cmd === 'plugin list') {
   console.log(JSON.stringify(state.plugins));
 } else if (cmd.startsWith('plugin install ')) {
   const id = args[2];
-  if (!state.marketplaces.includes(id.split('@')[1])) {
+  if (!state.marketplaces.some((m) => (m.name ?? m) === id.split('@')[1])) {
     console.error(`marketplace not found for ${id}`);
     process.exit(1);
   }

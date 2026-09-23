@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 # norkut-agent-kit
 
-Kit de herramientas de IA para el equipo Norkut: marketplace de plugins de Claude Code, CLI de bootstrap (`@norkut/agent-kit`) y memoria compartida cross-repo. Este repo se implementa siguiendo `PLAN.md`.
+Kit de herramientas de IA para el equipo Norkut: marketplace de plugins de Claude Code, CLI de bootstrap (`@norkutarg/agent-kit`, en GitHub Packages) y memoria compartida cross-repo. Este repo se implementa siguiendo `PLAN.md`.
 
 ## Antes de tocar nada
 - Leer `SPEC.md` completo. Es la fuente de verdad de la arquitectura (§4.3 estructura, §4.4 CLI, §4.5 memoria, §4.6 hooks).
@@ -24,10 +24,10 @@ Fase 0 construida (T0.1–T0.9). Fase 1 en curso. Actualizar esta sección al ce
 - Exportar `CLICKUP_API_TOKEN` y `GITHUB_TOKEN`: sin el primero el MCP `clickup` del plugin falla con 401.
 
 ### Pendiente de decisión
-- T1.1: registro para publicar el CLI. GitHub Packages exige renombrar a `@norkutarg/agent-kit`; Azure DevOps Artifacts mantiene `@norkut/agent-kit` pero suma un PAT de Azure. Publicar requiere push y tag `v<versión>`; con eso, `init` debería agregar el marketplace pineado (`NorkutArg/norkut-agent-kit@v<versión>`).
 - Owners y verticales de `modules.md` (casi todos `_por definir_`); "Terraform" en el resumen de `MEMORY.md` sin evidencia en `repos/`.
 
 ### Falta construir
+- T1.1: construido (GitHub Packages, `@norkutarg/agent-kit`, workflow `release`, marketplace pineado a `v<versión>`). Falta el primer release: merge a `main` y `git tag v0.1.0 && git push origin v0.1.0`. Hasta que exista el tag, `init` sin `--source` falla al agregar el marketplace.
 - Nada de Fase 0–2 que no dependa de personas: T2.1 (`init`/`sync` en todo el equipo) y T2.3 (ciclo de `promote-learning`) son de adopción.
 
 ### Cómo probar en local

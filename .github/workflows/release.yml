@@ -1,0 +1,33 @@
+name: release
+
+# Publica @norkutarg/agent-kit en GitHub Packages al pushear un tag v<versión>.
+# El mismo tag es el que `init` y `update` usan para pinear el marketplace de plugins.
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          registry-url: https://npm.pkg.github.com
+          scope: '@norkutarg'
+      - name: El tag coincide con la versión de package.json
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "El tag $GITHUB_REF_NAME no coincide con package.json ($version)"
+            exit 1
+          fi
+      - run: npm ci
+      - run: node --test
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

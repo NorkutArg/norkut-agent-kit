@@ -26,6 +26,7 @@ beforeEach(() => {
     FAKE_CLAUDE_LOG: join(dir, 'calls.log'),
     ...Object.fromEntries(requiredEnvVars().map((v) => [v, 'x'])),
   };
+  writeFileSync(join(dir, '.npmrc'), '@norkutarg:registry=https://npm.pkg.github.com\n');
   repo = join(dir, 'Module-X');
   mkdirSync(repo);
   spawnSync('git', ['init', '-q', repo]);
@@ -96,4 +97,30 @@ test('update avisa si el marketplace no entrega la versión que pinea el kit', (
 
 test('update falla si no se corrió init', () => {
   assert.throws(() => update({ env, log: quiet }), /Correr `init` primero/);
+});
+
+const calls = () => readFileSync(env.FAKE_CLAUDE_LOG, 'utf8').trim().split('\n').map((l) => JSON.parse(l).join(' '));
+
+test('update re-pinea el marketplace de GitHub al tag de la versión del kit', () => {
+  init({ role: 'pm', env, log: quiet });
+  const kit = kitWithVersion('0.2.0');
+  writeFileSync(join(kit, 'package.json'), JSON.stringify({ ...JSON.parse(readFileSync(join(kit, 'package.json'), 'utf8')), version: '0.2.0' }));
+  env.FAKE_CLAUDE_MARKET_VERSION = '0.2.0';
+  update({ env, kitRoot: kit, log: quiet });
+  assert.ok(calls().includes('plugin marketplace add NorkutArg/norkut-agent-kit@v0.2.0'));
+  assert.deepEqual(doctor({ cwd: dir, env, kitRoot: kit, mcp: false, log: quiet }).problems, []);
+});
+
+test('update no re-pinea un marketplace local de desarrollo', () => {
+  init({ role: 'pm', source: './', env, log: quiet });
+  writeFileSync(env.FAKE_CLAUDE_LOG, '');
+  update({ env, log: quiet });
+  assert.ok(!calls().some((c) => c.startsWith('plugin marketplace add')));
+  assert.ok(calls().includes('plugin marketplace update norkut'));
+});
+
+test('doctor reporta si npm no tiene el registry de @norkutarg', () => {
+  init({ role: 'pm', env, log: quiet });
+  writeFileSync(join(dir, '.npmrc'), '');
+  assert.deepEqual(doctor({ cwd: dir, env, mcp: false, log: quiet }).problems.map((p) => p.slice(0, 50)), ['npm: falta `@norkutarg:registry=https://npm.pkg.gi']);
 });

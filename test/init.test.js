@@ -31,7 +31,7 @@ const mutating = (list) => list.filter((a) => a.includes('add') || a.includes('i
 
 test('máquina limpia: agrega el marketplace e instala norkut-core y el plugin del rol', () => {
   const report = init({ role: 'backend', env, log: quiet });
-  assert.deepEqual(report.changed, ['marketplace norkut (NorkutArg/norkut-agent-kit)', 'norkut-core@norkut', 'norkut-backend@norkut']);
+  assert.deepEqual(report.changed, ['marketplace norkut (NorkutArg/norkut-agent-kit@v0.1.0)', 'norkut-core@norkut', 'norkut-backend@norkut']);
   assert.ok(calls().some((a) => a.join(' ') === 'plugin install norkut-core@norkut --scope user'));
 });
 

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { claude, claudeJson } from './claude.js';
 import { KIT_ROOT, requiredEnvVars } from './init.js';
 import { kitInfo } from './kit.js';
@@ -46,6 +47,13 @@ export function doctor({ cwd = process.cwd(), env = process.env, kitRoot = KIT_R
         else bad(`MCP ${name}: ${l.slice(l.lastIndexOf(' - ') + 3).split(' — ')[0].replace(/^[✘!]\s*/, '')}`);
       }
     }
+  }
+
+  // Sin el registry del scope, `npx @norkutarg/agent-kit` no encuentra el paquete (GitHub Packages).
+  const npmRegistry = spawnSync('npm', ['config', 'get', '@norkutarg:registry'], { env, encoding: 'utf8' });
+  if (npmRegistry.status === 0) {
+    if (npmRegistry.stdout.trim() === 'https://npm.pkg.github.com') ok('npm: @norkutarg apunta a GitHub Packages');
+    else bad('npm: falta `@norkutarg:registry=https://npm.pkg.github.com` en ~/.npmrc (ver README). Sin eso no se puede actualizar el kit.');
   }
 
   const missingEnv = requiredEnvVars(kitRoot).filter((v) => !env[v]);

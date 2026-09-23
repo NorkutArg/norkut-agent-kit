@@ -19,7 +19,7 @@ program
   .command('init')
   .description('Configura la máquina del dev: marketplace, plugins norkut-core + rol, MCPs y env vars faltantes')
   .requiredOption('--role <role>', `rol del dev (${ROLES.join('|')})`)
-  .option('--source <source>', 'origen del marketplace (repo de GitHub o ruta local)')
+  .option('--source <source>', 'origen del marketplace; por defecto NorkutArg/norkut-agent-kit@v<versión del kit>. Para desarrollo: ./')
   .action((opts) => {
     if (!ROLES.includes(opts.role)) {
       program.error(`--role inválido: "${opts.role}". Opciones: ${ROLES.join(', ')}`);

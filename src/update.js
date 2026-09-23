@@ -1,5 +1,5 @@
 import { claude, claudeJson } from './claude.js';
-import { KIT_ROOT } from './init.js';
+import { KIT_ROOT, pinnedSource } from './init.js';
 import { kitInfo } from './kit.js';
 
 // Refresca el marketplace y actualiza los plugins Norkut instalados; avisa si no quedan en la versión que pinea el kit.
@@ -11,8 +11,16 @@ export function update({ env = process.env, kitRoot = KIT_ROOT, log = console.lo
     if (!res.ok) throw new Error(`claude ${args.join(' ')} falló: ${res.stderr.trim()}`);
   };
 
-  if (!claudeJson(['plugin', 'marketplace', 'list'], { env }).some((m) => m.name === kit.marketplace)) {
-    throw new Error(`Marketplace ${kit.marketplace} no configurado. Correr \`init\` primero.`);
+  const configured = claudeJson(['plugin', 'marketplace', 'list'], { env }).find((m) => m.name === kit.marketplace);
+  if (!configured) throw new Error(`Marketplace ${kit.marketplace} no configurado. Correr \`init\` primero.`);
+  if (configured.source === 'directory') {
+    // Desarrollo del kit (`init --source ./`): se deja apuntando a la carpeta local.
+    log(`✔ Marketplace ${kit.marketplace} local (${configured.path}); no se re-pinea`);
+  } else {
+    // Volver a agregarlo con el tag de esta versión del kit lo reemplaza en el lugar; los plugins no se desinstalan.
+    const source = pinnedSource(kitRoot);
+    run(['plugin', 'marketplace', 'add', source]);
+    log(`✔ Marketplace ${kit.marketplace} pineado a ${source}`);
   }
   run(['plugin', 'marketplace', 'update', kit.marketplace]);
 
@@ -27,6 +35,6 @@ export function update({ env = process.env, kitRoot = KIT_ROOT, log = console.lo
     log(from === to ? `✔ ${id} ${to} (sin cambios)` : `✔ ${id} ${from} → ${to}`);
     if (to !== pinned) behind.push(`${id}: instalado ${to}, el kit pinea ${pinned}`);
   }
-  for (const b of behind) log(`⚠ ${b}. Actualizar el kit (\`npx @norkut/agent-kit@latest update\`) o revisar el marketplace.`);
+  for (const b of behind) log(`⚠ ${b}. Actualizar el kit (\`npx @norkutarg/agent-kit@latest update\`) o revisar el marketplace.`);
   return { updated: ids.filter((id) => before.get(id) !== after.get(id)), behind };
 }

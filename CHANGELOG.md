@@ -8,6 +8,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - T0.1: `package.json` del CLI `@norkut/agent-kit`, `bin/cli.js` con los comandos `init`, `sync`, `doctor` y `update` (todavía sin implementar), y `.claude-plugin/marketplace.json` inicial.
 
 ### Agregado (CLI)
+- T1.1: el paquete se publica en GitHub Packages como `@norkutarg/agent-kit` (antes `@norkut/agent-kit`). Workflow `release` al pushear `v<versión>`. `init` agrega el marketplace pineado a `NorkutArg/norkut-agent-kit@v<versión>` y `update` lo re-pinea (salvo un marketplace local de desarrollo). `doctor` verifica el registry de `@norkutarg` en npm.
 - `sync` siembra en `.agent/rules/` solo las reglas base del stack del repo (`stacks:` en el frontmatter; `dotnet`, `angular`, `python`; sin stack detectado, todas). Nueva regla base `python-services.md`.
 - `sync` genera `.cursor/rules/01-repo-instructions.mdc`, que le adjunta a Cursor el `CLAUDE.md` y la memoria del repo por referencia (Cursor no lee `CLAUDE.md`).
 - CI: `.github/workflows/test.yml` corre `node --test` y `npm pack --dry-run` en Node 20 y 22 en cada PR.

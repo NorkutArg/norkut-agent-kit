@@ -4,11 +4,17 @@ import { spawnSync } from 'node:child_process';
 import { claude, claudeJson } from './claude.js';
 
 export const KIT_ROOT = new URL('..', import.meta.url).pathname;
-export const DEFAULT_SOURCE = 'NorkutArg/norkut-agent-kit';
+export const KIT_REPO = 'NorkutArg/norkut-agent-kit';
 export const ROLES = ['backend', 'frontend', 'pm'];
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, 'utf8'));
+}
+
+// El kit pinea el marketplace al tag de su propia versión: todos los devs con la misma versión del CLI
+// tienen los mismos plugins. El workflow de release crea el tag `v<versión>` al publicar.
+export function pinnedSource(kitRoot = KIT_ROOT) {
+  return `${KIT_REPO}@v${readJson(join(kitRoot, 'package.json')).version}`;
 }
 
 // Nombres de env vars referenciadas como ${VAR} en el .mcp.json de norkut-core.
@@ -22,7 +28,8 @@ function cursorInstalled(env) {
   return process.platform === 'darwin' && existsSync('/Applications/Cursor.app');
 }
 
-export function init({ role, source = DEFAULT_SOURCE, env = process.env, kitRoot = KIT_ROOT, log = console.log }) {
+export function init({ role, source, env = process.env, kitRoot = KIT_ROOT, log = console.log }) {
+  source ??= pinnedSource(kitRoot);
   if (!ROLES.includes(role)) throw new Error(`--role inválido: "${role}". Opciones: ${ROLES.join(', ')}`);
   const report = { changed: [], warnings: [], missingEnv: [] };
 

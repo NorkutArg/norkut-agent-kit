@@ -6,7 +6,7 @@ Cada tarea tiene criterio de aceptación. Trabajar en orden; una tarea por sesi�
 
 ### T0.1 Estructura del repo
 - Crear la estructura de `SPEC.md` §4.3.
-- `package.json` con `name: @norkut/agent-kit`, `bin: { "norkut-agent-kit": "bin/cli.js" }`, `type: module`, Node ≥ 20.
+- `package.json` con `name: @norkutarg/agent-kit` (originalmente `@norkut/agent-kit`; renombrado en T1.1), `bin: { "norkut-agent-kit": "bin/cli.js" }`, `type: module`, Node ≥ 20.
 - **Acepta**: `npm pack` genera el tarball sin errores; `node bin/cli.js --help` lista `init|sync|doctor|update`.
 
 ### T0.2 Marketplace y plugin `norkut-core`
@@ -52,6 +52,9 @@ Cada tarea tiene criterio de aceptación. Trabajar en orden; una tarea por sesi�
 ## Fase 1 — Piloto
 
 ### T1.1 Publicar el CLI en el feed elegido (`SPEC.md` §9).
+- Decisión (2026-09): GitHub Packages. El scope tiene que ser la org, así que el paquete es `@norkutarg/agent-kit`.
+- Workflow `release` publica al pushear el tag `v<versión>`; `init` y `update` pinean el marketplace a ese tag.
+- **Acepta**: el tag `v0.1.0` publica el paquete y `npx @norkutarg/agent-kit init` funciona en una máquina con el `.npmrc` del README.
 ### T1.2 `sync` en `Module-Integrations` y `Front-Core`; completar sus `CLAUDE.md` con el Arquitecto.
 ### T1.3 Tres PRs reales revisados con `pr-review`; registrar falsos positivos en `memory/gotchas.md`.
 ### T1.4 Plugins `norkut-backend` y `norkut-frontend` con al menos un skill cada uno, escritos con sus owners.

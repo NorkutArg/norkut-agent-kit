@@ -14,7 +14,7 @@
 
 | # | Objetivo | Métrica de éxito |
 |---|---|---|
-| O1 | Un solo comando deja a cualquier dev con la misma config en Claude Code y Cursor | `npx @norkut/agent-kit init` en máquina limpia → sesión funcional en < 5 min |
+| O1 | Un solo comando deja a cualquier dev con la misma config en Claude Code y Cursor | `npx @norkutarg/agent-kit init` en máquina limpia → sesión funcional en < 5 min |
 | O2 | Un set único de skills, versionado, con owner | 100% de skills del equipo vienen del marketplace; ninguna copiada a mano en repos |
 | O3 | Memoria compartida versionada y revisable por PR | Contratos de eventos, ownership y gotchas viven en un solo lugar y se cargan en todos los repos |
 | O4 | Los agentes aplican los riesgos conocidos en cada PR | El skill `pr-review` corre en todos los PRs y chequea la lista de riesgos |
@@ -47,10 +47,12 @@ Cursor no lee `CLAUDE.md` (solo `.cursor/rules/` y `AGENTS.md`): `sync` genera `
 | Componente | Mecanismo | Scope |
 |---|---|---|
 | Marketplace + plugins | `claude plugin marketplace add NorkutArg/norkut-agent-kit` | Usuario (`~/.claude`). La versión la pinea el kit, no cada repo |
-| Bootstrap | `npx @norkut/agent-kit init` (publicado en el feed privado de Azure DevOps o GitHub Packages) | Máquina del dev |
-| Sync por repo | `npx @norkut/agent-kit sync` desde la raíz de un repo | Genera/actualiza `CLAUDE.md` (solo si no existe), `.claude/rules/`, `.cursor/rules/`, `.agent/` |
+| Bootstrap | `npx @norkutarg/agent-kit init` (publicado en GitHub Packages; cada dev configura `~/.npmrc` una vez, ver README) | Máquina del dev |
+| Sync por repo | `npx @norkutarg/agent-kit sync` desde la raíz de un repo | Genera/actualiza `CLAUDE.md` (solo si no existe), `.claude/rules/`, `.cursor/rules/`, `.agent/` |
 | Memoria cross-repo | Viaja dentro del plugin (`plugins/norkut-core/memory/`) y se expone vía skill `norkut-context` | Todos los repos |
 | Memoria por repo | `.agent/memory/` en cada repo | Ese repo |
+
+Decisión (2026-09): el CLI se publica en **GitHub Packages** como `@norkutarg/agent-kit` (el scope tiene que ser la org). La versión del CLI pinea la de los plugins: `init` y `update` agregan el marketplace como `NorkutArg/norkut-agent-kit@v<versión>`, el tag que crea el release.
 
 Decisión: plugins a scope **usuario**, no proyecto. El scope proyecto tuvo bugs reportados en 2026 (plugins que aparecen instalados pero no cargan). `init` garantiza que todos tengan la misma versión.
 
@@ -90,7 +92,7 @@ norkut-agent-kit/
 └── README.md
 ```
 
-### 4.4 CLI (`@norkut/agent-kit`)
+### 4.4 CLI (`@norkutarg/agent-kit`)
 
 | Comando | Qué hace |
 |---|---|
@@ -203,7 +205,6 @@ Cada skill: `SKILL.md` con frontmatter (`name`, `description`), < 300 líneas, r
 
 ## 9. Abierto
 
-- Nombre final del feed para publicar el CLI (`Azure DevOps Artifacts` vs GitHub Packages).
 - Si el MCP de Mongo entra en `core` o queda como opcional en `backend`.
 - Qué versión de Cursor usa el equipo y si ya lee `.claude/rules/` y `.claude/skills/`.
 - Owners de `backend` y `frontend`.
