@@ -43,7 +43,7 @@ test('idempotente: la segunda corrida no agrega ni instala nada', () => {
 });
 
 test('no reinstala lo que ya está configurado', () => {
-  writeFileSync(env.FAKE_CLAUDE_STATE, JSON.stringify({ marketplaces: ['norkut'], plugins: ['norkut-core@norkut'] }));
+  writeFileSync(env.FAKE_CLAUDE_STATE, JSON.stringify({ marketplaces: ['norkut'], plugins: [{ id: 'norkut-core@norkut', version: '0.1.0' }] }));
   const report = init({ role: 'pm', env, log: quiet });
   assert.deepEqual(report.changed, []);
   assert.deepEqual(mutating(calls()), []);

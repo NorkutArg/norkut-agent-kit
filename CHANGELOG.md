@@ -10,6 +10,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 ### Agregado (CLI)
 - T0.6: `init --role backend|frontend|pm [--source <repo o ruta>]`. Verifica Claude Code y Cursor, agrega el marketplace `norkut` si falta, instala `norkut-core` y el plugin del rol si ya existe en el marketplace, y lista las env vars faltantes de los MCPs. Idempotente.
 - T0.7: `sync`. Desde la raíz de un repo git crea `CLAUDE.md` (si falta) con datos de `modules.md` y los servicios .NET detectados, siembra `.agent/rules/` (si falta), genera `.claude/rules/*.md` y `.cursor/rules/*.mdc`, borra generados huérfanos, copia la memoria a `.agent/shared/`, genera `.cursor/rules/00-norkut-context.mdc`, crea `.agent/memory/MEMORY.md` y completa el `.gitignore`. Idempotente.
+- T0.8: `doctor [--no-mcp]`: versión del kit, Claude Code, marketplace, versión instalada vs. pineada de cada plugin, conexión de los MCPs del plugin, env vars faltantes y drift de reglas generadas y `.agent/shared/`; sale con código 1 si hay problemas. `update`: refresca el marketplace, actualiza los plugins Norkut instalados y avisa si no quedan en la versión que pinea el kit.
 
 ### Agregado (memoria)
 - T0.3: `memory/modules.md` con repos, eventos que emite cada uno y 23 colecciones compartidas; `event-contracts.md` con las reglas del contrato y los eventos con 3 o más repos involucrados; filas nuevas en `risks.md` y evidencia en `gotchas.md`.

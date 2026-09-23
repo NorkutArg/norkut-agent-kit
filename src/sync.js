@@ -93,6 +93,41 @@ export function contextRule(memoryDir) {
   ].join('\n');
 }
 
+// Archivos que sync regenera siempre (path absoluto → contenido) y generados huérfanos a borrar.
+// Lo usan sync para escribir y doctor para detectar drift.
+export function generatedFiles(cwd, kitRoot = KIT_ROOT) {
+  const files = new Map();
+  const rulesDir = join(cwd, '.agent/rules');
+  for (const f of listMd(rulesDir)) {
+    const rule = parseRule(readFileSync(join(rulesDir, f), 'utf8'));
+    const name = f.replace(/\.md$/, '');
+    files.set(join(cwd, '.claude/rules', `${name}.md`), toClaudeRule(rule));
+    files.set(join(cwd, '.cursor/rules', `${name}.mdc`), toCursorRule(rule));
+  }
+  const memoryDir = join(kitRoot, 'plugins/norkut-core/memory');
+  const copy = (src, dest) => {
+    for (const f of readdirSync(src)) {
+      const s = join(src, f);
+      if (statSync(s).isDirectory()) copy(s, join(dest, f));
+      else files.set(join(dest, f), `${SHARED_HEADER}\n${readFileSync(s, 'utf8')}`);
+    }
+  };
+  copy(memoryDir, join(cwd, '.agent/shared'));
+  files.set(join(cwd, '.cursor/rules/00-norkut-context.mdc'), contextRule(memoryDir));
+
+  // Huérfanos: generados (con la marca) cuya fuente ya no existe. Nunca archivos sin la marca.
+  const orphans = [];
+  for (const [dir, ext] of [['.claude/rules', '.md'], ['.cursor/rules', '.mdc']]) {
+    const abs = join(cwd, dir);
+    if (!existsSync(abs)) continue;
+    for (const f of readdirSync(abs).filter((x) => x.endsWith(ext))) {
+      const p = join(abs, f);
+      if (!files.has(p) && readFileSync(p, 'utf8').includes(GENERATED_MARK)) orphans.push(p);
+    }
+  }
+  return { files, orphans };
+}
+
 export function sync({ cwd = process.cwd(), kitRoot = KIT_ROOT, log = console.log } = {}) {
   if (!existsSync(join(cwd, '.git'))) throw new Error(`${cwd} no es la raíz de un repo git. Correr sync desde la raíz del repo.`);
   const changed = [];
@@ -122,41 +157,13 @@ export function sync({ cwd = process.cwd(), kitRoot = KIT_ROOT, log = console.lo
     }
   }
 
-  // 3. .claude/rules/*.md y .cursor/rules/*.mdc generados desde .agent/rules/.
-  const sources = listMd(rulesDir);
-  const expected = new Set();
-  for (const f of sources) {
-    const rule = parseRule(readFileSync(join(rulesDir, f), 'utf8'));
-    const name = f.replace(/\.md$/, '');
-    const claudePath = join(cwd, '.claude/rules', `${name}.md`);
-    const cursorPath = join(cwd, '.cursor/rules', `${name}.mdc`);
-    expected.add(claudePath).add(cursorPath);
-    writeIfChanged(claudePath, toClaudeRule(rule), changed);
-    writeIfChanged(cursorPath, toCursorRule(rule), changed);
+  // 3 y 4. Reglas generadas, memoria en .agent/shared/ y resumen para Cursor.
+  const { files, orphans } = generatedFiles(cwd, kitRoot);
+  for (const [path, content] of files) writeIfChanged(path, content, changed);
+  for (const p of orphans) {
+    rmSync(p);
+    changed.push(`${p} (borrado)`);
   }
-  // Borrar generados cuya fuente ya no existe. Nunca toca archivos sin la marca.
-  for (const [dir, ext] of [['.claude/rules', '.md'], ['.cursor/rules', '.mdc']]) {
-    const abs = join(cwd, dir);
-    if (!existsSync(abs)) continue;
-    for (const f of readdirSync(abs).filter((x) => x.endsWith(ext))) {
-      const p = join(abs, f);
-      if (!expected.has(p) && readFileSync(p, 'utf8').includes(GENERATED_MARK)) {
-        rmSync(p);
-        changed.push(`${p} (borrado)`);
-      }
-    }
-  }
-
-  // 4. Memoria cross-repo copiada a .agent/shared/ + resumen para Cursor.
-  const copy = (src, dest) => {
-    for (const f of readdirSync(src)) {
-      const s = join(src, f);
-      if (statSync(s).isDirectory()) copy(s, join(dest, f));
-      else writeIfChanged(join(dest, f), `${SHARED_HEADER}\n${readFileSync(s, 'utf8')}`, changed);
-    }
-  };
-  copy(memoryDir, join(cwd, '.agent/shared'));
-  writeIfChanged(join(cwd, '.cursor/rules/00-norkut-context.mdc'), contextRule(memoryDir), changed);
 
   // 5. .agent/memory/MEMORY.md desde template si falta.
   const repoMemory = join(cwd, '.agent/memory/MEMORY.md');

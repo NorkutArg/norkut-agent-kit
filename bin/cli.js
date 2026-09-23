@@ -3,15 +3,10 @@ import { readFileSync } from 'node:fs';
 import { Command } from 'commander';
 import { init, ROLES } from '../src/init.js';
 import { sync } from '../src/sync.js';
+import { doctor } from '../src/doctor.js';
+import { update } from '../src/update.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-
-function notImplemented(task) {
-  return () => {
-    console.error(`No implementado todavía (${task} en PLAN.md).`);
-    process.exitCode = 1;
-  };
-}
 
 const program = new Command();
 
@@ -50,11 +45,21 @@ program
 program
   .command('doctor')
   .description('Reporta versión del kit, plugins, MCPs, env vars faltantes y drift de reglas generadas')
-  .action(notImplemented('T0.8'));
+  .option('--no-mcp', 'no chequear la conexión de los MCPs (más rápido)')
+  .action((opts) => {
+    const { problems } = doctor({ mcp: opts.mcp });
+    if (problems.length) process.exitCode = 1;
+  });
 
 program
   .command('update')
   .description('Actualiza los plugins Norkut a la versión pineada por el kit')
-  .action(notImplemented('T0.8'));
+  .action(() => {
+    try {
+      update();
+    } catch (err) {
+      program.error(err.message);
+    }
+  });
 
 await program.parseAsync();
