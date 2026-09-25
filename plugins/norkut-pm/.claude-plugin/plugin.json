@@ -1,0 +1,8 @@
+{
+  "name": "norkut-pm",
+  "version": "0.1.0",
+  "description": "Herramientas de PM/TPM de Norkut: reportes de highlights y riesgos a partir de las dailies (transcripciones Tactiq en Google Drive)",
+  "author": { "name": "Norkut" },
+  "keywords": ["norkut", "pm", "status", "dailies"],
+  "dependencies": ["norkut-core"]
+}
